@@ -1,0 +1,23 @@
+{
+  "name": "digits_mlp_baseline",
+  "seed": 42,
+  "data_path": "data/digits.csv",
+  "target_column": "label",
+  "preprocessing": ["standard_scaler"],
+  "split": { "type": "hold_out", "train": 0.7, "val": 0.15, "test": 0.15 },
+  "model_type": "mlp",
+  "architecture": [784, 64, 10],
+  "activation": "relu",
+  "activation_beta": 1.0,
+  "initializer": "he",
+  "trainer": "minibatch",
+  "batch_size": 32,
+  "loss": "categorical_cross_entropy",
+  "optimizer": "gradient_descent",
+  "learning_rate": 0.1,
+  "optimizer_params": {},
+  "max_epochs": 100,
+  "loss_threshold": null,
+  "early_stopping_patience": 10,
+  "metrics": ["mse", "accuracy"]
+}

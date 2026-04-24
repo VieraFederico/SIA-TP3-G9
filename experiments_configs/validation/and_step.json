@@ -1,0 +1,23 @@
+{
+  "name": "validation_and_step",
+  "seed": 42,
+  "data_path": "data/and_gate.csv",
+  "target_column": "y",
+  "preprocessing": [],
+  "split": { "type": "hold_out", "train": 0.7, "val": 0.15, "test": 0.15 },
+  "model_type": "simple_perceptron",
+  "architecture": [2, 1],
+  "activation": "step",
+  "activation_beta": 1.0,
+  "initializer": "xavier",
+  "trainer": "online",
+  "batch_size": 32,
+  "loss": "mse",
+  "optimizer": "gradient_descent",
+  "learning_rate": 0.01,
+  "optimizer_params": {},
+  "max_epochs": 500,
+  "loss_threshold": null,
+  "early_stopping_patience": null,
+  "metrics": ["mse", "accuracy"]
+}

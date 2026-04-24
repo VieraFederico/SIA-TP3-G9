@@ -1,0 +1,23 @@
+{
+  "name": "validation_xor_mlp",
+  "seed": 42,
+  "data_path": "data/xor_gate.csv",
+  "target_column": "y",
+  "preprocessing": [],
+  "split": { "type": "hold_out", "train": 0.7, "val": 0.15, "test": 0.15 },
+  "model_type": "mlp",
+  "architecture": [2, 4, 1],
+  "activation": "tanh",
+  "activation_beta": 1.0,
+  "initializer": "xavier",
+  "trainer": "minibatch",
+  "batch_size": 4,
+  "loss": "mse",
+  "optimizer": "adam",
+  "learning_rate": 0.01,
+  "optimizer_params": { "beta1": 0.9, "beta2": 0.999, "epsilon": 1e-8 },
+  "max_epochs": 5000,
+  "loss_threshold": 0.01,
+  "early_stopping_patience": null,
+  "metrics": ["mse", "accuracy"]
+}
