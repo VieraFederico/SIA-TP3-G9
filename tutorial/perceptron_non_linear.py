@@ -28,7 +28,7 @@ class PerceptronNonLinear(Perceptron):
         return np.tanh(beta * linear_output)
 
 
-    def fit(self, X, y, beta_value=0.1):
+    def fit(self, X, y, beta_value=0.4):
         self.beta_value = beta_value
         n_samples, n_features = X.shape
         self.weights = np.zeros(n_features)
