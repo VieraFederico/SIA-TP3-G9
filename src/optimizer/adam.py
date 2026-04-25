@@ -1,0 +1,29 @@
+from src.optimizer.optimizer import Optimizer
+from src.activation.activation import Array
+
+
+class AdamOptimizer(Optimizer):
+    """Adam optimizer. Combina momentum y RMSprop con corrección de sesgo.
+
+    m = β₁·m + (1-β₁)·g
+    v = β₂·v + (1-β₂)·g²
+    m̂ = m / (1 - β₁ᵗ),  v̂ = v / (1 - β₂ᵗ)
+    Δw = -η · m̂ / (√v̂ + ε)
+    """
+
+    def __init__(self, eta: float, beta1: float = 0.9, beta2: float = 0.999, epsilon: float = 1e-8):
+        self.eta = eta
+        self.beta1 = beta1
+        self.beta2 = beta2
+        self.epsilon = epsilon
+        self._t: int = 0
+        self._m: list[Array] = []
+        self._v: list[Array] = []
+
+    def update(self, weights: list[Array], grads: list[Array]) -> list[Array]:
+        """Aplica la actualización de Adam con corrección de sesgo."""
+        raise NotImplementedError("TODO")
+
+    def reset(self) -> None:
+        """Reinicia momentos y contador de pasos."""
+        raise NotImplementedError("TODO")

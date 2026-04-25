@@ -1,52 +1,93 @@
-# TP3 — Perceptrón Simple y Multicapa
+# TP3 — Redes Neuronales: Perceptrón Simple y Multicapa
 
-Implementation of Simple Perceptron and Multilayer Perceptron (MLP) from scratch using NumPy.
+Implementación from scratch de perceptrón simple y MLP para los ejercicios del TP3.
+Todo el código usa NumPy vectorizado. Sin frameworks de ML.
 
-## Setup
+## Estructura
+
+```
+src/            Código principal (red, entrenamiento, datos)
+analysis/       Librería de análisis y gráficos (solo lee results/)
+utils/          Parser de argumentos CLI
+configs/        JSONs base por ejercicio
+results/        Runs guardadas (generado al correr)
+docs/           Documentación de cada módulo
+```
+
+## Cómo correr
 
 ```bash
+# Instalar dependencias
 pip install -r requirements.txt
+
+# Ejercicio 1 — Fraude (perceptrón simple)
+python main.py --ejercicio 1 --config configs/base_ej1.json
+
+# Ejercicio 2 — Dígitos (MLP)
+python main.py --ejercicio 2 --config configs/base_ej2.json
+
+# Ejercicio 3 — Más dígitos
+python main.py --ejercicio 3 --config configs/base_ej3.json
 ```
 
-## Running experiments
+## Sobreescribir hiperparámetros desde CLI
 
-From the **project root**, use `run.py`:
-
-**Short flags** (exercise + case name):
+Cualquier parámetro del JSON puede sobreescribirse sin editar el archivo:
 
 ```bash
-python run.py -ex 0 -c xor
-python run.py -ex 1 -c nonlinear
-python run.py -ex 2 -c baseline
-python run.py -ex 3 -c tuned
+# Cambiar optimizer y learning rate
+python main.py --ejercicio 2 --config configs/base_ej2.json --optimizer adam --eta 0.001
+
+# Cambiar arquitectura
+python main.py --ejercicio 2 --config configs/base_ej2.json --architecture 784 128 64 10
+
+# Cambiar modo de entrenamiento
+python main.py --ejercicio 2 --config configs/base_ej2.json --training-mode batch
 ```
 
-Same flags work on the script that holds the training loop:
+Ver la tabla completa de flags en `docs/utils.md`.
 
-```bash
-python scripts/run_experiment.py -ex 2 -c baseline
+## Resultados
+
+Cada run genera un directorio en `results/<run_id>/`:
+
+```
+results/ej2_base_20260421_143022/
+├── config.json     # Config exacta que se usó
+├── weights.npz     # Pesos entrenados
+├── history.json    # Error E por época
+└── metrics.json    # Métricas finales
 ```
 
-**Explicit JSON path** (ignores `-ex`/`-c`):
+## Análisis
 
-```bash
-python run.py --config experiments_configs/ex2_digits/baseline.json
+```python
+from analysis.data import load_history, compare_runs
+from analysis.plots import plot_error_curve, plot_metric_comparison
+
+# Graficar curva de error de una run
+history = load_history("ej2_base_20260421_143022")
+plot_error_curve(history, save_to="figures/ej2_error.png")
+
+# Comparar múltiples runs
+df = compare_runs(["run_sgd", "run_momentum", "run_adam"])
+plot_metric_comparison(df, metric="accuracy")
 ```
 
-See all presets and examples:
+## Correspondencia teoría → código
 
-```bash
-python run.py --help
-```
+| Teoría | Símbolo | Código |
+|---|---|---|
+| Excitación | h = Σ xᵢwᵢ | `h` |
+| Función de activación | θ(h) | `ActivationFunction` |
+| Salida obtenida | O = θ(h) | `O` |
+| Salida esperada | ζ | `zeta` |
+| Función de costo | E(O) | `CostFunction` |
+| Delta backprop | δ | `delta` |
+| Tasa de aprendizaje | η | `eta` |
+| Actualización de pesos | Δw | `delta_w` |
+| Convergencia | E < ε | `epsilon` |
 
-Plots and comparisons are done **outside** this script: import `analysis.loaders` and `analysis.plots` from a notebook or ad-hoc script (see `ARCHITECTURE.md`).
+## Documentación
 
-## Running tests
-
-```bash
-pytest tests/
-```
-
-## Project structure
-
-See `ARCHITECTURE.md` for module layout, `-ex`/`-c` mapping (`utils/experiment_cli.py`), and how JSON relates to `src/config.py`.
+Ver `docs/` para la descripción detallada de cada módulo.
