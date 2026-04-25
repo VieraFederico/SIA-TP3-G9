@@ -5,13 +5,32 @@ import numpy as np
 
 from plot_utils import plot_decision_boundary, plot_adaline_regression
 from tutorial.perceptron_linear import PerceptronLinear
+from tutorial.perceptron_non_linear import PerceptronNonLinear
 from tutorial.perceptron_step import PerceptronStep
 
 
 def main():
     #perceptron_step_test()
-    perceptron_linear_test()
+    #perceptron_linear_test()
+    tanh_perceptron_test()
 
+
+def tanh_perceptron_test():
+    X = np.linspace(-5, 5, 50)
+    Y = np.tanh(X)
+    perceptron = PerceptronNonLinear(learning_rate=0.15, epochs=100)
+    perceptron.fit(X.reshape(-1, 1), Y)
+    print("Weights:", perceptron.weights)
+    print("Bias:", perceptron.bias)
+    print("Predictions:", perceptron.predict(X.reshape(-1, 1)))
+    plot_adaline_regression(
+        X, Y, perceptron,
+        f"TANH Regression Epoch Result",
+        f"tanh_result.png",
+        xlim=(-6, 6),
+        ylim=(-1.5, 1.5),
+        centered=True
+    )
 
 def perceptron_linear_test():
 
