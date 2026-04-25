@@ -1,45 +1,18 @@
-import numpy as np
-
-from plot_utils import plot_decision_boundary
+from abc import ABC, abstractmethod
 
 
-class Perceptron:
-    def __init__(self, learning_rate: float = 0.1, epochs: int = 20):
+class Perceptron(ABC):
+    def __init__(self, learning_rate=0.1, epochs=20):
         self.lr = learning_rate
         self.epochs = epochs
         self.weights = None
         self.bias = None
         self.errors_per_epoch = []
 
-    #receives X as an input array. in this case a 2 integer array (because we are doing and AND logic gate)
-    #np.dot calculates the dot product of X and the weights array. that is x1 * w1 + x2 * w2
-    #np.where is similar to a Java predicate. if linear output >= 0, then returns 1, else returns 0
-    def predict(self, X):
-        linear_output = np.dot(X, self.weights) + self.bias
-        return np.where(linear_output >= 0, 1, 0)
-
-    #receives X as an input array, and Y as the results array.
-    #we run the fit function to train the perceptron and adjust weights and bias
-    #ideally so that it can correctly solve the problem (in this case, logic AND problem)
+    @abstractmethod
     def fit(self, X, y):
-        n_samples, n_features = X.shape
-        self.weights = np.zeros(n_features)
-        self.bias = 0.0
-        for i in range(self.epochs):
-            print(f"Epoch: {i}")
-            print("Weights:", self.weights)
-            print("Bias:", self.bias)
-            print("")
-            errors = 0
-            for xi, target in zip(X, y):
-                w = self.weights
-                bias = self.bias
-                linear_output = np.dot(xi, w) + self.bias
-                y_pred = 1 if linear_output >= 0 else 0
-                update = self.lr * (target - y_pred)
-                self.weights += update * xi
-                self.bias += update
-                errors += int(update != 0)
-            self.errors_per_epoch.append(errors)
-            plot_decision_boundary(X, y, self, f"Perceptron Decision Boundary (AND) Epoch {i+1}", f"output/epoch_{i+1}_decision_boundary.png")
+        ...
 
+    @abstractmethod
+    def predict(self, X):
+        ...
