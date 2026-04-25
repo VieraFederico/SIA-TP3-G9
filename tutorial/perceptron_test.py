@@ -17,7 +17,7 @@ def perceptron_linear_test():
 
     # 50 points in [-5, 5]
     X_linear = np.linspace(-5, 5, 50)
-    Y_linear = 2 * X_linear
+    Y_linear = 2 * X_linear + 5
 
     p_linear = PerceptronLinear(learning_rate=0.01, epochs=20)
     p_linear.fit(X_linear.reshape(-1, 1), Y_linear)
@@ -27,7 +27,10 @@ def perceptron_linear_test():
     plot_adaline_regression(
         X_linear, Y_linear, p_linear,
         f"ADALINE Regression Epoch Result",
-        f"adaline result.png"
+        f"adaline result.png",
+        xlim=(-6, 6),
+        ylim=(-8, 18),
+        centered=True
     )
 
 def perceptron_step_test():

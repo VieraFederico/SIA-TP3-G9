@@ -47,7 +47,10 @@ class PerceptronLinear(Perceptron):
             plot_adaline_regression(
                 X, y, self,
                 f"ADALINE Regression Epoch {i + 1}",
-                f"output/adaline_epoch_{i + 1}.png"
+                f"output/adaline_epoch_{i + 1}.png",
+                xlim=(-6, 6),
+                ylim=(-8, 18),
+                centered=True
             )
 
 
