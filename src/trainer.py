@@ -25,13 +25,11 @@ class Trainer:
         self.metrics = metrics
         self.cfg = cfg
 
-    def fit( self, model: Model, X_train: Array, zeta_train: Array, X_val: Array, zeta_val: Array,
-    ) -> dict:
+    def fit( self, model: Model, X_train: Array, zeta_train: Array, X_val: Array, zeta_val: Array) -> dict:
         """Loop de épocas. Soporta modo online / batch / minibatch según cfg.training_mode.
 
         X_train, zeta_train — datos con los que el modelo APRENDE (ajusta pesos)
-        X_val,   zeta_val   — datos que el modelo NUNCA ve durante el aprendizaje,
-                              solo los usamos para vigilar si hay overfitting
+        X_val,   zeta_val   — datos que el modelo NUNCA ve durante el aprendizaje, solo los usamos para vigilar si hay overfitting
 
         Returns:
             history: {"train_error": [...], "val_error": [...], "epochs": int}
@@ -44,7 +42,6 @@ class Trainer:
             # ── ENTRENAMIENTO ─────────────────────────────────────────────
             # Recorre todos los datos muestra por muestra y ajusta los pesos.
             # Equivale exactamente al for xi, target in zip(X, y) del tutorial.
-            # Faltaria meterle todo el tema de separar datos de entrenamiento, validacion y testing
             epoch_error = self._run_online(model, X_train, zeta_train)
             train_errors.append(epoch_error)
 
