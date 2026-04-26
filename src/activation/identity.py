@@ -1,3 +1,4 @@
+import numpy as np
 from src.activation.activation import ActivationFunction, Array
 
 
@@ -6,8 +7,8 @@ class IdentityActivation(ActivationFunction):
 
     def compute(self, h: Array) -> Array:
         """θ(h) = h"""
-        raise NotImplementedError("TODO")
+        return h
 
     def derivative(self, h: Array) -> Array:
         """θ'(h) = 1"""
-        raise NotImplementedError("TODO")
+        return np.ones_like(h)

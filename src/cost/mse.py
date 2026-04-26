@@ -1,3 +1,4 @@
+import numpy as np
 from src.cost.cost import CostFunction
 from src.activation.activation import Array
 
@@ -7,8 +8,10 @@ class MSECost(CostFunction):
 
     def compute(self, zeta: Array, O: Array) -> float:
         """E = (1/2N) Σ (ζ - O)²"""
-        raise NotImplementedError("TODO")
+        N = len(zeta) if hasattr(zeta, '__len__') else 1
+        return (1 / (2 * N)) * np.sum((zeta - O) ** 2)
 
     def gradient(self, zeta: Array, O: Array) -> Array:
         """∂E/∂O = -(ζ - O) / N"""
-        raise NotImplementedError("TODO")
+        N = len(zeta) if hasattr(zeta, '__len__') else 1
+        return -(zeta - O) / N

@@ -5,8 +5,8 @@ from src.activation.activation import Array
 class MomentumOptimizer(Optimizer):
     """Gradient descent con momentum. v = β·v - η·∂E/∂w,  Δw = v"""
 
-    def __init__(self, eta: float, beta: float = 0.9):
-        self.eta = eta
+    def __init__(self, learning_rate: float, beta: float = 0.9):
+        self.learning_rate = learning_rate
         self.beta = beta
         self._velocities: list[Array] = []
 

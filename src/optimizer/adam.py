@@ -11,8 +11,8 @@ class AdamOptimizer(Optimizer):
     Δw = -η · m̂ / (√v̂ + ε)
     """
 
-    def __init__(self, eta: float, beta1: float = 0.9, beta2: float = 0.999, epsilon: float = 1e-8):
-        self.eta = eta
+    def __init__(self, learning_rate: float, beta1: float = 0.9, beta2: float = 0.999, epsilon: float = 1e-8):
+        self.learning_rate = learning_rate
         self.beta1 = beta1
         self.beta2 = beta2
         self.epsilon = epsilon
