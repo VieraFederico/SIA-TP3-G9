@@ -98,17 +98,20 @@ class Trainer:
     def _apply_optimizer(self, model: Model) -> None:
         """Puente entre el modelo y el optimizer.
 
-        El optimizer solo habla en listas de arrays — no sabe qué es una Neuron.
-        El Trainer empaqueta pesos y gradientes, llama al optimizer, y devuelve
-        los pesos actualizados al modelo.
+        El optimizer solo habla en listas de arrays — no sabe cuántas capas hay.
+        El Trainer aplana (W, b) de todas las capas, llama al optimizer, y
+        devuelve los pesos actualizados al modelo capa por capa.
         """
-        weights = [model.weights,      np.array([model.bias])]
-        grads   = [model.grad_weights, np.array([model.grad_bias])]
+        layer_params = model.get_weights()
+        layer_grads  = model.get_grads()
+
+        weights = [p for wb in layer_params for p in wb]
+        grads   = [g for gb in layer_grads  for g in gb]
 
         updated = self.optimizer.update(weights, grads)
 
-        model.weights = updated[0]
-        model.bias    = float(updated[1][0])
+        it = iter(updated)
+        model.set_weights([(next(it), next(it)) for _ in layer_params])
 
     def evaluate(self, model: Model, X: Array, zeta: Array) -> dict[str, float]:
         """Evaluación final — solo mide, NO toca los pesos."""

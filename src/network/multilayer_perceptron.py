@@ -11,18 +11,27 @@ class MultilayerPerceptron:
     def __init__(self, layers: list[NeuronLayer]) -> None:
         self.layers = layers
 
-    def forward(self, X: Array) -> Array:
-        """Propaga X por todas las capas: x → V¹ → V² → ... → O"""
-        raise NotImplementedError("TODO")
+    def forward(self, x: Array) -> Array:
+        """Propaga x por todas las capas: x → V¹ → V² → ... → O"""
+        for layer in self.layers:
+            x = layer.forward(x)
+        return x
 
     def backward(self, grad_output: Array) -> None:
-        """Retropropaga δ por todas las capas usando regla de la cadena."""
-        raise NotImplementedError("TODO")
+        """Retropropaga δ por todas las capas en orden inverso (regla de la cadena)."""
+        delta = grad_output
+        for layer in reversed(self.layers):
+            delta = layer.backward(delta)
 
     def get_weights(self) -> list[tuple[Array, Array]]:
         """Retorna lista de (weights, bias) por capa."""
-        raise NotImplementedError("TODO")
+        return [layer.get_weights() for layer in self.layers]
+
+    def get_grads(self) -> list[tuple[Array, Array]]:
+        """Retorna lista de (grad_weights, grad_bias) por capa."""
+        return [(layer.grad_weights, layer.grad_bias) for layer in self.layers]
 
     def set_weights(self, weights: list[tuple[Array, Array]]) -> None:
         """Asigna pesos a todas las capas."""
-        raise NotImplementedError("TODO")
+        for layer, (w, b) in zip(self.layers, weights):
+            layer.set_weights(w, b)
