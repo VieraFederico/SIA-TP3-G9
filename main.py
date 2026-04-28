@@ -1,6 +1,6 @@
 from utils.parser import parse_args
 from src.experiments import ejercicio_1, ejercicio_2, ejercicio_3
-from src.experiments import tutorial_step, tutorial_linear, tutorial_non_linear
+from src.experiments import tutorial_step, tutorial_linear, tutorial_non_linear, tutorial_mlp_tanh
 
 EJERCICIOS = {
     1: ejercicio_1.run,
@@ -12,6 +12,7 @@ TUTORIALES = {
     "step":      tutorial_step.run,
     "linear":    tutorial_linear.run,
     "nonlinear": tutorial_non_linear.run,
+    "mlp":       tutorial_mlp_tanh.run,
 }
 
 

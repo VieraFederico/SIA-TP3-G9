@@ -21,8 +21,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     group.add_argument(
         "--tutorial", "-t",
-        choices=["step", "linear", "nonlinear"],
-        metavar="{step,linear,nonlinear}",
+        choices=["step", "linear", "nonlinear", "mlp"],
+        metavar="{step,linear,nonlinear,mlp}",
         help="Tutorial de sanidad a correr (no requiere --config)",
     )
 
