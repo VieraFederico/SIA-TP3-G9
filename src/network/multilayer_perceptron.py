@@ -1,8 +1,9 @@
+from src.network.model import Model
 from src.network.neuron_layer import NeuronLayer
 from src.activation.activation import Array
 
 
-class MultilayerPerceptron:
+class MultilayerPerceptron(Model):
     """Lista de NeuronLayer. Implementa feed-forward y backpropagation.
 
     Un perceptrón simple es un MLP con una sola NeuronLayer de una neurona.

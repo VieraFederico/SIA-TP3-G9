@@ -8,14 +8,15 @@ class GradientDescent(Optimizer):
     def __init__(self, learning_rate: float):
         self.learning_rate = learning_rate
 
-    def update(self, weights: list[Array], grads: list[Array]) -> list[Array]:
-        """Δw = -η · ∂E/∂w,
-        no olvidemos que la gradient (la derivada de E en funcion de w)
-        Es una suma E = (1/2N) · Σ (ζ - O)²"""
-        updated = []
-        for w, g in zip(weights, grads):
-            updated.append(w - self.learning_rate * g)
-        return updated
+    def update(
+        self,
+        params: list[tuple[Array, Array]],
+        grads:  list[tuple[Array, Array]],
+    ) -> list[tuple[Array, Array]]:
+        return [
+            (w - self.learning_rate * gw, b - self.learning_rate * gb)
+            for (w, b), (gw, gb) in zip(params, grads)
+        ]
 
     def reset(self) -> None:
-        pass #Basicamente un continue de Java, Gradient Descent es medio Dummy, no tiene estado interno
+        pass

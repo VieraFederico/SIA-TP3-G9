@@ -1,3 +1,4 @@
+import numpy as np
 from src.optimizer.optimizer import Optimizer
 from src.activation.activation import Array
 
@@ -17,13 +18,18 @@ class AdamOptimizer(Optimizer):
         self.beta2 = beta2
         self.epsilon = epsilon
         self._t: int = 0
-        self._m: list[Array] = []
-        self._v: list[Array] = []
+        self._m: list[tuple[Array, Array]] = []
+        self._v: list[tuple[Array, Array]] = []
 
-    def update(self, weights: list[Array], grads: list[Array]) -> list[Array]:
+    def update(
+        self,
+        params: list[tuple[Array, Array]],
+        grads:  list[tuple[Array, Array]],
+    ) -> list[tuple[Array, Array]]:
         """Aplica la actualización de Adam con corrección de sesgo."""
         raise NotImplementedError("TODO")
 
     def reset(self) -> None:
-        """Reinicia momentos y contador de pasos."""
-        raise NotImplementedError("TODO")
+        self._t = 0
+        self._m = []
+        self._v = []

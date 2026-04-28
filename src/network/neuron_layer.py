@@ -34,7 +34,10 @@ class NeuronLayer:
         Calcula ∂E/∂W y ∂E/∂b para esta capa, y devuelve ∂E/∂x
         para que la capa anterior pueda continuar la cadena.
         """
-        delta_h = delta * self.activation.derivative(self._h)  # ∂E/∂h = ∂E/∂V · θ'(h)
+        if self.activation.is_differentiable():
+            delta_h = delta * self.activation.derivative(self._h)  # ∂E/∂h = ∂E/∂V · θ'(h)
+        else:
+            delta_h = delta  # Rosenblatt: θ'(h) = 1 para activaciones no diferenciables
         self.grad_weights = np.outer(self._x, delta_h)          # ∂E/∂W = xᵀ · δh
         self.grad_bias = delta_h                                 # ∂E/∂b = δh
         return self.weights @ delta_h                            # ∂E/∂x → capa anterior

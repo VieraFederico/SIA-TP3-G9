@@ -113,7 +113,7 @@ def plot_regression(X: Array, zeta: Array, model, title: str, output_path: str,
     X_sorted = x_sorted.reshape(-1, 1)
 
     # Predecimos sobre los puntos ordenados para dibujar la curva
-    y_pred = np.array([model.forward(xi) for xi in X_sorted])
+    y_pred = np.array([model.forward(xi) for xi in X_sorted]).squeeze()
 
     plt.figure(figsize=(7, 5))
     plt.scatter(x_vals, zeta,
