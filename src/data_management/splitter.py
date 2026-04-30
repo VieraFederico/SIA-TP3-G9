@@ -9,8 +9,7 @@ def train_val_test_split(
     seed: int,
 ) -> tuple[Dataset, Dataset, Dataset]:
     """Divide dataset en train/val/test con proporciones dadas."""
-    raise NotImplementedError("TODO")
-
+    return dataset.split(train=train, val=val, test=test, seed=seed)
 
 def k_fold_split(dataset: Dataset, k: int, seed: int) -> list[tuple[Dataset, Dataset]]:
     """Genera k particiones (train, val) para validación cruzada."""
