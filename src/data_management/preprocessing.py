@@ -3,12 +3,14 @@ from src.activation.activation import Array
 
 def normalize(X: Array) -> Array:
     """Escala cada feature a [0, 1]: x' = (x - min) / (max - min)"""
-    raise NotImplementedError("TODO")
+    Xnorm = (X - X.min()) / (X.max() - X.min())
+    return Xnorm
 
 
 def standardize(X: Array) -> Array:
     """Estandariza cada feature: x' = (x - μ) / σ"""
-    raise NotImplementedError("TODO")
+    Xstd = (X - X.mean()) / X.std()
+    return Xstd
 
 
 def one_hot_encode(zeta: Array, n_classes: int) -> Array:

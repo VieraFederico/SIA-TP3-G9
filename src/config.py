@@ -12,6 +12,7 @@ class ExperimentConfig:
     # Datos
     data_path: str
     target_column: str
+
     preprocessing: str                        # "normalize" | "standardize" | "one_hot"
     split_train: float
     split_val: float
@@ -38,6 +39,10 @@ class ExperimentConfig:
 
     # Métricas a evaluar al final
     metrics: list[str] = field(default_factory=lambda: ["accuracy"])
+
+    # Opcional lista de columnas a ignorar en el dataset (ej: ID, timestamp)
+    columns_to_ignore: list[str] = field(default_factory=list)
+
 
 
 def load_config(path: Path) -> ExperimentConfig:

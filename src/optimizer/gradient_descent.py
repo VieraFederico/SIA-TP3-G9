@@ -8,7 +8,7 @@ class GradientDescent(Optimizer):
     def __init__(self, learning_rate: float):
         self.learning_rate = learning_rate
 
-    def update( elf, params: list[tuple[Array, Array]], grads:  list[tuple[Array, Array]],) -> list[tuple[Array, Array]]:
+    def update(self, params: list[tuple[Array, Array]], grads:  list[tuple[Array, Array]],) -> list[tuple[Array, Array]]:
         updated = []
         for (w, b), (gw, gb) in zip(params, grads):
             w_nuevo = w - self.learning_rate * gw
