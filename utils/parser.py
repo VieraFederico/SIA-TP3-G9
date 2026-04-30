@@ -90,4 +90,4 @@ def parse_args() -> tuple[str, int | str, ExperimentConfig | None]:
         if value is not None:
             setattr(cfg, field, value)
 
-    return ("ejercicio", args.ejercicio, cfg)
+    return "ejercicio", args.ejercicio, cfg

@@ -9,7 +9,7 @@ from src.config import ExperimentConfig
 from analysis.plots import plot_regression, plot_error_curve
 
 
-def run_linear() -> None:
+def run() -> None:
     """Reproduce el ADALINE lineal del tutorial con la nueva arquitectura.
 
     Resultado esperado:
