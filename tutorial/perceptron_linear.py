@@ -21,7 +21,9 @@ class PerceptronLinear(Perceptron):
             print(f"Epoch: {i}")
             print("Weights:", self.weights)
             print("Bias:", self.bias)
-            print("")
+            predictions = np.zeros_like(y, dtype=float)
+            targets = []
+
             errors = 0
 
             rng = np.random.default_rng(seed=42)
@@ -34,7 +36,9 @@ class PerceptronLinear(Perceptron):
                 # we instead assign y_pred as the identity function
                 # (directly equals weighted sum instead of {0,1})
                 y_pred = linear_output
-                err = error(target, y_pred)
+                predictions[idx] = y_pred
+
+
                 update = self.lr * (target - y_pred)
 
                 # we need to update the weight and bias.
@@ -44,8 +48,13 @@ class PerceptronLinear(Perceptron):
                 # self.weights += update * xi * (the derivative of activation function)
                 self.weights += update * xi
                 self.bias += update
-                errors += err
-            self.errors_per_epoch.append(errors)
+
+
+            err = mse(self,y, predictions)
+            self.errors_per_epoch.append(err)
+            print(f"Best Error {err}")
+            print("")
+
             # import
             # inside fit(), after each epoch
             # plot_adaline_regression(
@@ -58,5 +67,7 @@ class PerceptronLinear(Perceptron):
             # )
 
 
-def error(actual, predicted):
-        return 0.5 * np.sum(np.square(actual-predicted))
+def mse(self, zeta, predictions) -> float:
+    """E = (1/2N) Σ (ζ - O)²"""
+    N = len(zeta) if hasattr(zeta, '__len__') else 1
+    return (1 / (2 * N)) * np.sum((zeta - predictions) ** 2)

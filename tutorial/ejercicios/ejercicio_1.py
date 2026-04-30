@@ -1,3 +1,4 @@
+from analysis.plots import plot_error_curve
 from config import ExperimentConfig
 from data_management.loader import load_csv
 from data_management.preprocessing import standardize, normalize
@@ -20,5 +21,7 @@ def run(cfg: ExperimentConfig) -> None:
     norm_dataset=normalize(dataset.X)
 
 
-    p_linear = PerceptronLinear(0.05, 20, 0.01)
+    p_linear = PerceptronLinear(0.1, cfg.epochs, 0.01)
     p_linear.fit(norm_dataset,dataset.zeta)
+    history = {"train_error": p_linear.errors_per_epoch, "val_error": p_linear.errors_per_epoch}
+    plot_error_curve(history, "output/error_curve.png")
