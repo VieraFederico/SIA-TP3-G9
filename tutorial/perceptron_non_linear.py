@@ -39,7 +39,13 @@ class PerceptronNonLinear(Perceptron):
             print("Bias:", self.bias)
             print("")
             errors = 0
-            for xi, target in zip(X, y):
+
+            rng = np.random.default_rng(seed=42)
+            indices = rng.permutation(n_samples)
+            for idx in indices:
+                xi = X[idx]
+                target = y[idx]
+
                 linear_output = np.dot(xi, self.weights) + self.bias
                 # we are using tanh function, so the activation function becomes tanh(beta * linear_output)
                 y_pred = np.tanh(self.beta_value * linear_output)

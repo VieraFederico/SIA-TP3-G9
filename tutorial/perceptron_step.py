@@ -26,7 +26,12 @@ class PerceptronStep(Perceptron):
             print("Bias:", self.bias)
             print("")
             errors = 0
-            for xi, target in zip(X, y):
+            rng = np.random.default_rng(seed=42)
+            indices = rng.permutation(n_samples)
+            for idx in indices:
+                xi = X[idx]
+                target = y[idx]
+
                 linear_output = np.dot(xi, self.weights) + self.bias
                 y_pred = 1 if linear_output >= 0 else 0
                 update = self.lr * (target - y_pred)

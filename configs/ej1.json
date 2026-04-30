@@ -1,0 +1,21 @@
+{
+  "name": "ej1_base",
+  "seed": 42,
+  "data_path": "data/transactions.csv",
+  "target_column": "big_model_fraud_probability",
+  "preprocessing": "standardize",
+  "split_train": 0.7,
+  "split_val": 0.15,
+  "split_test": 0.15,
+  "activation": "identity",
+  "beta": 1.0,
+  "architecture": [10,1],
+  "cost_function": "mse",
+  "optimizer": "gradient_descent",
+  "eta": 0.01,
+  "training_mode": "online",
+  "epochs": 20,
+  "epsilon": 0.001,
+  "metrics": ["mse", "accuracy"],
+  "columns_to_ignore" : ["flagged_fraud"]
+}
