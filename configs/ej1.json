@@ -14,7 +14,7 @@
   "optimizer": "",
   "eta": 0.01,
   "training_mode": "online",
-  "epochs": 20,
+  "epochs": 200,
   "epsilon": 0.001,
   "metrics": ["mse", "accuracy"],
   "columns_to_ignore" : ["flagged_fraud", "timestamp","device_screen_resolution"]

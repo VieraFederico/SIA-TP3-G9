@@ -3,6 +3,7 @@ from config import ExperimentConfig
 from data_management.loader import load_csv
 from data_management.preprocessing import standardize, normalize
 from tutorial.perceptron_linear import PerceptronLinear
+from tutorial.perceptron_non_linear import PerceptronNonLinear
 
 
 def run(cfg: ExperimentConfig) -> None:
@@ -24,4 +25,10 @@ def run(cfg: ExperimentConfig) -> None:
     p_linear = PerceptronLinear(0.1, cfg.epochs, 0.01)
     p_linear.fit(norm_dataset,dataset.zeta)
     history = {"train_error": p_linear.errors_per_epoch, "val_error": p_linear.errors_per_epoch}
-    plot_error_curve(history, "output/error_curve.png")
+    plot_error_curve(history, "output/error_linear_curve.png")
+
+    p_non_linear = PerceptronNonLinear(0.1, cfg.epochs, 0.01)
+    p_non_linear.fit(norm_dataset,dataset.zeta)
+
+    history = {"train_error": p_linear.errors_per_epoch, "val_error": p_linear.errors_per_epoch}
+    plot_error_curve(history, "output/error_linear_curve.png")

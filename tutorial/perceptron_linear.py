@@ -22,10 +22,6 @@ class PerceptronLinear(Perceptron):
             print("Weights:", self.weights)
             print("Bias:", self.bias)
             predictions = np.zeros_like(y, dtype=float)
-            targets = []
-
-            errors = 0
-
             rng = np.random.default_rng(seed=42)
             indices = rng.permutation(n_samples)
             for idx in indices:
