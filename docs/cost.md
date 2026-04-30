@@ -5,27 +5,37 @@ Es lo que el entrenamiento minimiza ajustando los pesos w.
 
 ## ABC: `CostFunction`
 
-- `compute(zeta, O)` → `E` (error escalar, un número)
-- `gradient(zeta, O)` → `∂E/∂O` (vector, arranca la retropropagación)
+- `compute(zeta, O) → float` — error escalar E
+- `gradient(zeta, O) → Array` — `∂E/∂O`, arranca la retropropagación
 
 ## Implementaciones
 
-### `MSE` (`mse.py`)
-Error cuadrático medio.
+### `MSECost` (`mse.py`) ✓ Implementado
+Error cuadrático medio, normalizado por el número de salidas N.
 ```
-E = (1/2) Σ (ζ - O)²
-∂E/∂O = -(ζ - O)
+E(ζ, O)  = (1 / 2N) · Σ (ζᵢ - Oᵢ)²
+∂E/∂O    = -(ζ - O) / N
 ```
-Usar para: regresión, perceptrón lineal y no lineal del Ej1.
 
-### `BinaryCrossEntropy` (`binary_cross_entropy.py`)
-Para clasificación binaria con salida sigmoide.
+Donde N es el tamaño del vector de salida (`len(zeta)` si es array, 1 si es escalar).
+Para un perceptrón con 1 salida, N=1 y se reduce a `(1/2)(ζ-O)²`.
 
-### `CategoricalCrossEntropy` (`categorical_cross_entropy.py`)
+Usar para: regresión, perceptrón lineal y no lineal (Ej1), tutoriales.
+
+### `BinaryCrossEntropy` (`binary_cross_entropy.py`) *(stub)*
+Para clasificación binaria con salida sigmoide/logistic.
+
+### `CategoricalCrossEntropy` (`categorical_cross_entropy.py`) *(stub)*
 Para clasificación multiclase con salida softmax.
-Usar para: MLP de dígitos (Ej2, Ej3).
+Usar para: MLP de dígitos (Ej2, Ej3) — configurado en `base_ej2.json` y `base_ej3.json`.
 
 ## Relación con la teoría
 
-`gradient()` devuelve `∂E/∂O`, que es el primer factor de la regla de la cadena
-en backpropagation: `∂E/∂w = (∂E/∂O) · (∂O/∂h) · (∂h/∂w)`
+`gradient()` devuelve `∂E/∂O`, primer factor de la regla de la cadena:
+```
+∂E/∂w = (∂E/∂O) · (∂O/∂h) · (∂h/∂w)
+           ↑           ↑          ↑
+       cost.gradient  θ'(h)    _x (entrada)
+```
+
+El `Trainer` pasa este gradiente a `model.backward()` para arrancar la retropropagación.

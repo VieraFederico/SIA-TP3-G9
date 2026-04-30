@@ -3,13 +3,13 @@
 Todo lo que toca los datos del TP vive acá.
 El resto del proyecto importa de acá y no accede a los CSVs directamente.
 
-## `dataset.py` — Dataset
+## `dataset.py` — Dataset ✓
 
 Dataclass simple con dos campos:
 - `X`: matriz de entradas, shape `(n_muestras, n_features)`
 - `zeta`: salidas esperadas ζ, shape `(n_muestras,)` o `(n_muestras, n_clases)`
 
-## `loader.py` — Carga de CSV
+## `loader.py` — Carga de CSV *(stub)*
 
 ```python
 dataset = load_csv("data/transactions.csv", target_column="isFraud")
@@ -17,7 +17,7 @@ dataset = load_csv("data/transactions.csv", target_column="isFraud")
 
 Lee el CSV con pandas, separa features de target, devuelve un `Dataset`.
 
-## `preprocessing.py` — Preprocesamiento
+## `preprocessing.py` — Preprocesamiento *(stub)*
 
 Tres funciones, cada una recibe `X` y devuelve `X` transformado:
 
@@ -25,12 +25,17 @@ Tres funciones, cada una recibe `X` y devuelve `X` transformado:
 - `standardize(X)` → media 0, desviación 1
 - `one_hot_encode(zeta, n_classes)` → convierte etiquetas enteras a vectores binarios
 
-**Importante:** el preprocesamiento se fitea solo sobre train y se aplica a val y test.
+**Importante:** el preprocesamiento se fitea **solo sobre train** y se aplica a val y test.
 Nunca fitear sobre val o test (data leakage).
 
-## `splitter.py` — Split de Datos
+## `splitter.py` — Split de Datos *(stub)*
 
 ```python
 train, val, test = train_val_test_split(dataset, train=0.7, val=0.15, test=0.15, seed=42)
 folds = k_fold_split(dataset, k=5, seed=42)
 ```
+
+Las proporciones en los JSONs base:
+- `base_ej1.json`: 70% / 15% / 15%
+- `base_ej2.json`: 80% / 10% / 10%
+- `base_ej3.json`: 80% / 10% / 10%

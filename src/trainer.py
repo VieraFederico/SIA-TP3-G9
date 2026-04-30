@@ -29,14 +29,14 @@ class Trainer:
 
         train_errors, val_errors = [], []
 
-        for epoch in range(self.cfg.epochs):
+        for epoch in range(self.cfg.epochs): # ← "for a fixed number of epochs" (Clase 11)
             train_errors.append(train_fn(model, X_train, zeta_train))
             val_errors.append(self._evaluate_loss(model, X_val, zeta_val))
 
             if train_errors[-1] < self.cfg.epsilon:
                 break
 
-        return {"train_error": train_errors, "val_error": val_errors, "epochs": epoch + 1}
+        return {"train_error": train_errors, "val_error": val_errors, "epochs": epoch + 1} # ← "if E < ε: break"  (Clase 11)
 
     def evaluate(self, model: Model, X: Array, zeta: Array) -> dict[str, float]:
         """Evaluación final — solo mide métricas, no toca los pesos."""
@@ -54,10 +54,44 @@ class Trainer:
         """
         total_loss = 0.0
         for xi, zi in zip(X, zeta):
+            # ── PASO 1: FORWARD ──────────────────────────────────────────────
+            # Clase 10.1/10.2: O^μ = Θ(Σ xᵢ·wᵢ + w₀)   ("salida obtenida")
+            # Clase 11:        O_j = Θ(Σ_k V_k^{M-1} · w_jk^M)  (feed forward pass)
             O    = model.forward(xi)
+            # ── PASO 2a: GRADIENTE EN LA SALIDA ──────────────────────────────
+            # Clase 11 (regla de la cadena):  ∂E/∂W = ∂E/∂O · ∂O/∂h · ∂h/∂W
+            #
+            # `grad` es SOLO el primer factor:  grad = ∂E/∂O
+            # Es el "punto de entrada" del backprop — cuánto cambió el error
+            # respecto a la SALIDA de la red.  model.backward() se encarga
+            # de multiplicar el resto de la cadena hacia atrás capa por capa.
+            #
+            # Conexión con perceptrón simple (Clase 10.2):
+            #   Para MSE,  ∂E/∂O = -(ζ - O),  por eso Δw = η·(ζ-O)·x
+            #   Aquí eso mismo queda separado en cost_fn.gradient + model.backward
             grad = self.cost_fn.gradient(zi, O)
+            # ── PASO 2b: BACKWARD (backpropagation) ──────────────────────────
+            # Clase 11: aplica la regla de la cadena de SALIDA hacia ENTRADA.
+            # Para cada capa calcula  ∂E/∂W  usando el δ de la capa siguiente
+            # (magnitud δ de Rumelhart, Hinton & Williams 1986).
+            #
+            #   δ^M     = ∂E/∂O · ∂O/∂h          (capa de salida)
+            #   δ^{l}   = (Σ_j δ^{l+1} · w_j) · ∂V^l/∂h^l  (capas ocultas)
+            #   ∂E/∂W^l = δ^l · V^{l-1}           (gradiente de los pesos)
+            #
+            # Perceptrón simple: con una sola capa no hay "retro"-propagación;
+            # ∂E/∂W = -(ζ-O)·x  se calcula directo, sin necesidad de δ.
             model.backward(grad)
+            # ── PASO 2c: ACTUALIZACIÓN DE PESOS ──────────────────────────────
+            # Clase 10.1/10.2:  w ← w + Δw    con  Δw = η·(ζ-O)·x
+            # Clase 11:         w ← w - η · ∂E/∂W   (gradiente descendente)
+            #
+            # model.get_grads() devuelve los ∂E/∂W acumulados en backward().
+            # optimizer.update() aplica la regla de descenso (puede ser SGD, Adam, etc.)
             model.set_weights(self.optimizer.update(model.get_weights(), model.get_grads()))
+            # ── PASO 3: ERROR ─────────────────────────────────────────────────
+            # Clase 11:  E = f(x^μ_1, ..., x^μ_n);  si E < ε → convergencia
+            # Acumulamos E sobre todas las muestras de la época.
             total_loss += self.cost_fn.compute(zi, O)
         return total_loss
 

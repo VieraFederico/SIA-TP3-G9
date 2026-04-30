@@ -1,46 +1,54 @@
-# experiments/ — Flujos por Ejercicio
+# experiments/ — Flujos por Ejercicio y Tutoriales
 
-Cada archivo orquesta un ejercicio completo del TP.
-Usan `Trainer`, `data_management` y `persistence` como dependencias.
+Todos los experimentos viven en `src/experiments/`. `main.py` los enruta según el flag CLI.
 
-## Interfaz común
+## Tutoriales (acceso: `--tutorial {step,linear,nonlinear,mlp}`)
 
-Cada archivo expone una función `run(cfg: ExperimentConfig) -> None`.
-`main.py` la llama según `--ejercicio`.
+Los tutoriales no necesitan `--config` ni datos externos. Sirven para verificar que
+forward, backward y el optimizer funcionan correctamente.
 
-## `ejercicio_1.py` — Detección de Fraude
+### `tutorial_step.py` — Compuerta AND ✓
+Arquitectura: `MultilayerPerceptron([NeuronLayer(2, 1, StepActivation())])`
+- Entrena con `eta=0.1`, `epochs=50`, `training_mode="online"`
+- Resultado esperado: predicciones `[0, 0, 0, 1]`
+- Salida: `output/tutorial/step/` — frontera de decisión + curva de error
 
-**Dataset:** `transactions.csv`
-**Modelo:** perceptrón simple (MLP con 1 neurona)
-**Objetivo:** comparar perceptrón lineal vs no lineal, analizar generalización
+### `tutorial_linear.py` — ADALINE ✓
+Arquitectura: `MultilayerPerceptron([NeuronLayer(1, 1, IdentityActivation())])`
+- Ajusta `y = ax + b` con MSE
+- Salida: `output/tutorial/linear/` — regresión + curva de error
 
-Flujo:
-1. Carga y estandariza `transactions.csv`
-2. Split train/val/test
-3. Entrena con activación `identity` (lineal)
-4. Entrena con activación `tanh` / `logistic` (no lineal)
-5. Compara métricas de ambos en test
-6. Guarda ambas runs
+### `tutorial_non_linear.py` — Tanh simple ✓
+Arquitectura: `MultilayerPerceptron([NeuronLayer(1, 1, TanhActivation(β))])`
+- Aproxima `tanh(x)` con un perceptrón de 1 neurona
+- Salida: `output/tutorial/nonlinear/`
 
-## `ejercicio_2.py` — Reconocimiento de Dígitos
+### `tutorial_mlp_tanh.py` — MLP [1→5→1] ✓
+Arquitectura: `MultilayerPerceptron([NeuronLayer(1, 5, TanhActivation()), NeuronLayer(5, 1, TanhActivation())])`
+- Aproxima `tanh(x)` en [-5, 5] con `eta=0.05`, `epochs=500`
+- Verifica que forward y backward a través de múltiples capas funcionen
+- Salida: `output/tutorial/mlp_tanh/` — regresión + curva de error
 
-**Dataset:** `digits.csv`
-**Modelo:** MLP configurable
-**Objetivo:** explorar efecto de η, arquitectura y optimizador
+## Ejercicios (acceso: `--ejercicio {1,2,3} --config <path.json>`)
 
-Flujo:
-1. Carga y estandariza `digits.csv`
-2. Construye el MLP según `cfg.architecture`
-3. Entrena con la config dada (η, optimizer, training_mode)
-4. Evalúa accuracy y F1 en test
-5. Guarda la run
+Cada archivo expone `run(cfg: ExperimentConfig) -> None`. Todos están pendientes.
 
-Para comparar variantes: correr múltiples veces con distintos flags CLI.
+### `ejercicio_1.py` — Detección de Fraude *(stub)*
+**Config base:** `configs/base_ej1.json`
+- Dataset: `data/transactions.csv`, target `isFraud`
+- Arquitectura: `[10, 1]`, activación tanh
+- Preprocesamiento: standardize, split 70/15/15
+- Objetivo: comparar perceptrón lineal (identity) vs no lineal (tanh/logistic)
 
-## `ejercicio_3.py` — Más Dígitos (objetivo ≥ 98%)
+### `ejercicio_2.py` — Reconocimiento de Dígitos *(stub)*
+**Config base:** `configs/base_ej2.json`
+- Dataset: `data/digits.csv`, target `label`
+- Arquitectura: `[784, 64, 10]`, costo `categorical_cross_entropy`
+- Preprocesamiento: standardize, split 80/10/10, minibatch 32
+- Objetivo: explorar efecto de η, arquitectura y optimizador
 
-**Dataset:** `more_data_digits.csv` + `digits_test.csv`
-**Modelo:** MLP tuneado
-**Objetivo:** accuracy ≥ 98% en test
-
-Igual que ej2 pero con más datos de entrenamiento y evaluación en `digits_test.csv`.
+### `ejercicio_3.py` — Dígitos con objetivo ≥ 98% *(stub)*
+**Config base:** `configs/base_ej3.json`
+- Dataset: `data/more_data_digits.csv`
+- Arquitectura: `[784, 128, 64, 10]`, optimizer Adam, `eta=0.001`
+- Igual que ej2 pero con más datos y arquitectura más profunda

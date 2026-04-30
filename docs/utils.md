@@ -2,53 +2,61 @@
 
 ## `parser.py` — Parser de Argumentos
 
-Define todos los flags CLI del proyecto y resuelve la prioridad:
+Define todos los flags CLI y resuelve la prioridad:
 **CLI sobreescribe JSON, JSON es el default.**
 
 ### Uso
 
 ```bash
-python main.py --ejercicio <1|2|3> --config <path.json> [flags opcionales]
+# Correr un ejercicio (requiere --config)
+python main.py --ejercicio <1|2|3> --config <path.json> [overrides...]
+
+# Correr un tutorial (no requiere --config)
+python main.py --tutorial <step|linear|nonlinear|mlp>
 ```
+
+`--ejercicio`/`-e` y `--tutorial`/`-t` son **mutuamente excluyentes** y uno es obligatorio.
 
 ### Tabla de flags
 
-| Flag | Tipo | Descripción |
-|---|---|---|
-| `--ejercicio` | int | **Obligatorio.** 1, 2 o 3. |
-| `--config` | str | **Obligatorio.** Path al JSON base. |
-| `--name` | str | Nombre de la run. |
-| `--seed` | int | Semilla aleatoria. |
-| `--data-path` | str | Path al CSV. |
-| `--target-column` | str | Columna objetivo del CSV. |
-| `--preprocessing` | str | `normalize` / `standardize` / `one_hot` |
-| `--split-train` | float | Proporción train. |
-| `--split-val` | float | Proporción val. |
-| `--split-test` | float | Proporción test. |
-| `--activation` | str | `step` / `identity` / `tanh` / `logistic` / `relu` |
-| `--beta` | float | β para tanh y logistic. |
-| `--architecture` | int+ | Neuronas por capa. Ej: `784 128 10` |
-| `--cost-function` | str | `mse` / `binary_cross_entropy` / `categorical_cross_entropy` |
-| `--optimizer` | str | `gradient_descent` / `momentum` / `adam` |
-| `--eta` | float | Tasa de aprendizaje η. |
-| `--momentum-beta` | float | β de Momentum. |
-| `--adam-beta1` | float | β₁ de Adam. |
-| `--adam-beta2` | float | β₂ de Adam. |
-| `--training-mode` | str | `online` / `batch` / `minibatch` |
-| `--batch-size` | int | Tamaño del lote (minibatch). |
-| `--epochs` | int | Máximo de épocas. |
-| `--epsilon` | float | Umbral de convergencia E < ε. |
+| Flag | Alias | Tipo | Descripción |
+|---|---|---|---|
+| `--ejercicio` | `-e` | int `{1,2,3}` | Ejercicio a correr. Requiere `--config`. |
+| `--tutorial` | `-t` | str `{step,linear,nonlinear,mlp}` | Tutorial de sanidad. Sin `--config`. |
+| `--config` | `-c` | Path | JSON de configuración (obligatorio con `--ejercicio`). |
+| `--eta` | | float | Tasa de aprendizaje η. |
+| `--epochs` | | int | Máximo de épocas. |
+| `--epsilon` | | float | Umbral de convergencia E < ε. |
+| `--activation` | | str | `step` / `identity` / `tanh` / `logistic` / `relu` |
+| `--beta` | | float | β para tanh/logistic. |
+| `--optimizer` | | str | `gradient_descent` / `momentum` / `adam` |
+| `--training-mode` | | str | `online` / `batch` / `minibatch` |
+| `--batch-size` | | int | Tamaño del lote (minibatch). |
+| `--seed` | | int | Semilla aleatoria. |
+| `--momentum-beta` | | float | β de Momentum. |
+| `--adam-beta1` | | float | β₁ de Adam. |
+| `--adam-beta2` | | float | β₂ de Adam. |
+
+**Nota:** los flags de datos (`--data-path`, `--preprocessing`, `--split-train`, etc.)
+y de arquitectura (`--architecture`, `--cost-function`) se configuran solo desde el JSON.
+No tienen override CLI.
 
 ### Ejemplos
 
 ```bash
-# Variar optimizador (sin tocar el JSON)
+# Tutorial de compuerta AND
+python main.py --tutorial step
+
+# Tutorial MLP multicapa
+python main.py --tutorial mlp
+
+# Ejercicio 1 con config base
+python main.py --ejercicio 1 --config configs/base_ej1.json
+
+# Ejercicio 2 variando optimizer (sobreescribe el JSON)
 python main.py --ejercicio 2 --config configs/base_ej2.json --optimizer adam --eta 0.001
 
-# Variar arquitectura
-python main.py --ejercicio 2 --config configs/base_ej2.json --architecture 784 128 64 10
-
-# Variar learning rate
+# Ejercicio 2 variando learning rate
 python main.py --ejercicio 2 --config configs/base_ej2.json --eta 0.1
 python main.py --ejercicio 2 --config configs/base_ej2.json --eta 0.01
 python main.py --ejercicio 2 --config configs/base_ej2.json --eta 0.001
@@ -56,6 +64,10 @@ python main.py --ejercicio 2 --config configs/base_ej2.json --eta 0.001
 
 ### Cómo funciona internamente
 
-1. Lee `--config` y carga el JSON como `ExperimentConfig`
-2. Por cada flag CLI que el usuario pasó **explícitamente**, sobreescribe el campo correspondiente
-3. Devuelve `(ejercicio: int, cfg: ExperimentConfig)` listo para usar
+1. Parsea `sys.argv`
+2. Si es tutorial: devuelve `("tutorial", nombre, None)` directamente
+3. Si es ejercicio: lee `--config` y construye `ExperimentConfig` desde el JSON
+4. Por cada flag CLI que se haya pasado explícitamente, sobreescribe el campo del config
+5. Devuelve `("ejercicio", número: int, cfg: ExperimentConfig)`
+
+`parse_args()` devuelve `(mode: str, key: int | str, cfg: ExperimentConfig | None)`.
