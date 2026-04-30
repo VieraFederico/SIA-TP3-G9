@@ -18,7 +18,7 @@ def main():
 def tanh_perceptron_test():
     X = np.linspace(-5, 5, 50)
     Y = np.tanh(X)
-    perceptron = PerceptronNonLinear(learning_rate=0.15, epochs=100)
+    perceptron = PerceptronNonLinear(learning_rate=0.15, epochs=100,epsilon=0.1)
     perceptron.fit(X.reshape(-1, 1), Y)
     print("Weights:", perceptron.weights)
     print("Bias:", perceptron.bias)
@@ -38,7 +38,7 @@ def perceptron_linear_test():
     X_linear = np.linspace(-5, 5, 50)
     Y_linear = 2 * X_linear + 5
 
-    p_linear = PerceptronLinear(learning_rate=0.01, epochs=20)
+    p_linear = PerceptronLinear(learning_rate=0.01, epochs=20,epsilon=0.1)
     p_linear.fit(X_linear.reshape(-1, 1), Y_linear)
     print("Weights:", p_linear.weights)
     print("Bias:", p_linear.bias)
@@ -70,7 +70,7 @@ def perceptron_step_test():
     # this is the expected output of our AND logic gate
     y_and = np.array([0, 0, 0, 1])
 
-    p_and = PerceptronStep(learning_rate=0.03, epochs=2)
+    p_and = PerceptronStep(learning_rate=0.03, epochs=13,epsilon=0.1)
     p_and.fit(X_and, y_and)
 
     print("Weights:", p_and.weights)

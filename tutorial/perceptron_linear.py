@@ -1,7 +1,7 @@
 import numpy as np
+from tutorial.plot_utils import plot_adaline_regression
 
 from tutorial.perceptron import Perceptron
-from tutorial.plot_utils import plot_decision_boundary
 
 
 class PerceptronLinear(Perceptron):
@@ -15,8 +15,8 @@ class PerceptronLinear(Perceptron):
 
     def fit(self, X, y):
         n_samples, n_features = X.shape
-        self.weights = np.zeros(n_features)
-        self.bias = 0.0
+        self.weights = np.random.rand(n_features)
+        self.bias = np.random.rand()
         for i in range(self.epochs):
             print(f"Epoch: {i}")
             print("Weights:", self.weights)
@@ -28,7 +28,6 @@ class PerceptronLinear(Perceptron):
                 # we instead assign y_pred as the identity function
                 # (directly equals weighted sum instead of {0,1})
                 y_pred = linear_output
-                err = error(target, y_pred)
                 update = self.lr * (target - y_pred)
 
                 # we need to update the weight and bias.
@@ -38,11 +37,13 @@ class PerceptronLinear(Perceptron):
                 # self.weights += update * xi * (the derivative of activation function)
                 self.weights += update * xi
                 self.bias += update
+
+                err = error(target, y_pred)
                 errors += err
             self.errors_per_epoch.append(errors)
-            # import
-            from tutorial.plot_utils import plot_adaline_regression
-
+            if errors < self.epsilon:
+                print(f"Method converged at epoch: {i}")
+                break
             # inside fit(), after each epoch
             plot_adaline_regression(
                 X, y, self,

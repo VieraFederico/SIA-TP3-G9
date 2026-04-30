@@ -14,8 +14,8 @@ class PerceptronNonLinear(Perceptron):
     # where B is an arbitrary constant from > 0 to 10
     # the derivative from
 
-    def __init__(self, learning_rate=0.1, epochs=20):
-        super().__init__(learning_rate, epochs)
+    def __init__(self, learning_rate=0.1, epochs=20, epsilon=0.01):
+        super().__init__(learning_rate, epochs,epsilon)
         self.beta_value = None
 
     def predict(self, X):
@@ -31,8 +31,8 @@ class PerceptronNonLinear(Perceptron):
     def fit(self, X, y, beta_value=0.4):
         self.beta_value = beta_value
         n_samples, n_features = X.shape
-        self.weights = np.zeros(n_features)
-        self.bias = 0.0
+        self.weights = np.random.rand(n_features)
+        self.bias = np.random.rand()
         for i in range(self.epochs):
             print(f"Epoch: {i}")
             print("Weights:", self.weights)
@@ -54,6 +54,9 @@ class PerceptronNonLinear(Perceptron):
                 self.bias += update * _tanh_derivative(linear_output, self.beta_value)
                 errors += err
             self.errors_per_epoch.append(errors)
+            if errors < self.epsilon:
+                print(f"Method converged at epoch: {i}")
+                break
 
             # inside fit(), after each epoch
             plot_adaline_regression(
