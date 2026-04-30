@@ -57,7 +57,7 @@ class Trainer:
             # ── PASO 1: FORWARD ──────────────────────────────────────────────
             # Clase 10.1/10.2: O^μ = Θ(Σ xᵢ·wᵢ + w₀)   ("salida obtenida")
             # Clase 11:        O_j = Θ(Σ_k V_k^{M-1} · w_jk^M)  (feed forward pass)
-            O    = model.forward(xi)
+            O    = model.forward(xi) # En este punto en un Perceptron Simple de cuaquier tipo, tenemos Output = θ(h)
             # ── PASO 2a: GRADIENTE EN LA SALIDA ──────────────────────────────
             # Clase 11 (regla de la cadena):  ∂E/∂W = ∂E/∂O · ∂O/∂h · ∂h/∂W
             #

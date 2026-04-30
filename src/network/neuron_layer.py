@@ -24,8 +24,8 @@ class NeuronLayer:
     def forward(self, x: Array) -> Array:
         """h = x·W + b,  V = θ(h). Guarda x, h y V para backprop."""
         self._x = x
-        self._h = x @ self.weights + self.bias
-        self._V = self.activation.compute(self._h)
+        self._h = x @ self.weights + self.bias # Esto es multiplicacion Matricial de Python 3.5
+        self._V = self.activation.compute(self._h) # V = θ(h)
         return self._V
 
     def backward(self, delta: Array) -> Array:
