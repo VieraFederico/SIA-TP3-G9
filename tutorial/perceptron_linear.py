@@ -15,8 +15,8 @@ class PerceptronLinear(Perceptron):
 
     def fit(self, X, y):
         n_samples, n_features = X.shape
-        self.weights = np.zeros(n_features)
-        self.bias = 0.0
+        self.weights = np.random.rand(n_features)
+        self.bias = np.random.rand()
         for i in range(self.epochs):
             print(f"Epoch: {i}")
             print("Weights:", self.weights)
@@ -45,11 +45,15 @@ class PerceptronLinear(Perceptron):
                 self.weights += update * xi
                 self.bias += update
 
-
             err = mse(self,y, predictions)
             self.errors_per_epoch.append(err)
+
             print(f"Best Error {err}")
             print("")
+
+            if err < self.epsilon:
+                print(f"Early stopping at epoch {i} with error {err}")
+                return
 
             # import
             # inside fit(), after each epoch
