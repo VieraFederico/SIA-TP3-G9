@@ -27,7 +27,8 @@ def plot_error_curve(history: dict, output_path: str) -> None:
 
     plt.figure(figsize=(7, 4))
     plt.plot(epochs, history["train_error"], marker="o", label="Train error")
-    plt.plot(epochs, history["val_error"],   marker="o", label="Val error", linestyle="--")
+    if history["val_error"]:
+        plt.plot(epochs, history["val_error"], marker="o", linestyle="--", label="Val error")
     plt.title("Error por época")
     plt.xlabel("Época")
     plt.ylabel("E")
