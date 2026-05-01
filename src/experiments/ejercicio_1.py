@@ -13,19 +13,13 @@ from src.trainer import Trainer
 from src.config import ExperimentConfig
 from analysis.plots import plot_regression
 from src.metric.classify_data import classify_data
+from src.metric.f1 import  F1Metric
 
 def run(cfg: ExperimentConfig) -> None:
     """Ejercicio 1 — Detección de fraude.
 
     Entrena perceptrón simple lineal vs no lineal. Compara generalización.
     """
-    #TODO: LEER ESTO. para el ejercicio 1 viendo el dataset, uno puede observar un par de patrones:
-    # 1. Las compras que suelen ser de mayor valor, suelen ser fraudulentas.
-    # 2. Las compras que se realizan en poco tiempo de sesion, suelen ser fraudulentas.
-    # 3. Las compras con cuentas de pocos dias de uso
-    # 4. La diferencia de dias entre las compras suelen ser menor
-    # Aca uno se pregunta, si necesita usar las columnas MAS relevantes, o directamente usar todas.
-    # Probemos con usar todas a ver como sale *excepto las ultimas, que es lo que quiero estimar*.
 
     target_columns = cfg.target_column
     excluded_columns = ["flagged_fraud"]
@@ -81,7 +75,7 @@ def run(cfg: ExperimentConfig) -> None:
 
     layer = model.layers[0]
     print("=== ADALINE Lineal — verificación de arquitectura ===")
-    #TODO: fix this. son varios pesos.
+    #TODO: fix this. son varios pesos, y no layer.weights[0, 0].
     print(f"Peso final:  w={layer.weights[0, 0]:.4f}   (esperado ≈ 2.0)")
     print(f"Bias final:  w₀={layer.bias[0]:.4f}   (esperado ≈ 5.0)")
     print(f"Épocas:      {history['epochs']}")
@@ -102,6 +96,7 @@ def run(cfg: ExperimentConfig) -> None:
 
     print(f"Error final: {history['train_error'][-1]:.4f}")
 
+    #TODO: pensar en otras maneras de splitting como k-fold.
     train_dataset, val_dataset, test_dataset,[train_index, val_index, test_index] = norm_dataset.split(
         train=cfg.split_train,
         val=cfg.split_val,
@@ -122,4 +117,7 @@ def run(cfg: ExperimentConfig) -> None:
     # TODO: add this as parameter in config. We assume that prob. >= 0.8 is a positive classification
     [false_pos, false_neg, true_pos, true_neg] = classify_data(test_zeta_dataset, test_new_model_output_dataset,threshold=0.8)
     print (f"Resultados en test: FP={false_pos}  FN={false_neg}  TP={true_pos}  TN={true_neg}")
+
+    f1_metric = F1Metric().compute(false_pos, false_neg, true_pos, true_neg)
+    print(f"Resultados en test: F1={f1_metric}")
 
