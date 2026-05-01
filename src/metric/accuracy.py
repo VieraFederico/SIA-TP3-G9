@@ -3,11 +3,9 @@ from src.activation.activation import Array
 
 
 class AccuracyMetric(Metric):
-    """Fracción de ejemplos clasificados correctamente."""
 
-    def compute(self, zeta: Array, O: Array) -> float:
-        """accuracy = (1/N) Σ 1[argmax(ζᵢ) == argmax(Oᵢ)]"""
-        raise NotImplementedError("TODO")
+    def compute(self, false_pos: float, false_neg: float, true_pos: float, true_neg:float) -> float:
+        return (true_pos + true_neg) / (true_pos + true_neg + false_pos + false_neg) if (true_pos + true_neg + false_pos + false_neg) > 0 else 0.0
 
     def name(self) -> str:
         return "accuracy"

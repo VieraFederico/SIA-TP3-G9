@@ -6,7 +6,7 @@ class Metric(ABC):
     """Métrica de evaluación del modelo."""
 
     @abstractmethod
-    def compute(self, zeta: Array, O: Array) -> float:
+    def compute(self, false_pos: float, false_neg: float, true_pos: float, true_neg:float) -> float:
         """Calcula la métrica comparando salida esperada ζ contra obtenida O."""
         ...
 

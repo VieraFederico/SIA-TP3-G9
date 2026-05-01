@@ -86,3 +86,6 @@ def run(cfg: ExperimentConfig) -> None:
         print("Se omite plot_regression: solo aplica a datasets de 1 feature.")
     plot_error_curve(history, output_path="output/experiment/linear/error_curve.png")
     print("Gráficos guardados en output/experiment/linear/")
+
+    print(f"Error final: {history['train_error'][-1]:.4f}")
+
