@@ -11,7 +11,7 @@ from src.cost.mse import MSECost
 from src.optimizer.gradient_descent import GradientDescent
 from src.trainer import Trainer
 from src.config import ExperimentConfig
-from analysis.plots import plot_regression, plot_error_curve
+from analysis.plots import plot_regression
 from src.metric.classify_data import classify_data
 
 def run(cfg: ExperimentConfig) -> None:
@@ -31,12 +31,7 @@ def run(cfg: ExperimentConfig) -> None:
     excluded_columns = ["flagged_fraud"]
 
     dataset = load_csv(cfg.data_path, target_column=target_columns,columns_to_ignore=excluded_columns)
-    # train_dataset, val_dataset, test_dataset = dataset.split(
-    #     train=cfg.split_train,
-    #     val=cfg.split_val,
-    #     test=cfg.split_test,
-    #     seed=cfg.seed,
-    # )
+
     if cfg.activation == "identity":
         activation = IdentityActivation()
     elif cfg.activation == "tanh":
@@ -66,17 +61,16 @@ def run(cfg: ExperimentConfig) -> None:
     norm_dataset = dataset.copy()
     norm_dataset.X = normalize_with_params(dataset.X, Xmin, Xmax)
     norm_dataset.zeta = normalize_with_params(dataset.zeta, Xmin_zeta, Xmax_zeta)
-    # val_dataset.X = normalize_with_params(val_dataset.X, Xmin, Xmax)
 
     history = trainer.fit(
         model,
         X_train=norm_dataset.X, zeta_train=norm_dataset.zeta,
-        # X_val=val_dataset.X, zeta_val=val_dataset.zeta,
         X_val=None, zeta_val=None,
     )
 
     layer = model.layers[0]
     print("=== ADALINE Lineal — verificación de arquitectura ===")
+    #TODO: fix this. son varios pesos.
     print(f"Peso final:  w={layer.weights[0, 0]:.4f}   (esperado ≈ 2.0)")
     print(f"Bias final:  w₀={layer.bias[0]:.4f}   (esperado ≈ 5.0)")
     print(f"Épocas:      {history['epochs']}")
@@ -97,4 +91,19 @@ def run(cfg: ExperimentConfig) -> None:
 
     print(f"Error final: {history['train_error'][-1]:.4f}")
 
-    # classify_data()
+    train_dataset, val_dataset, test_dataset = norm_dataset.split(
+        train=cfg.split_train,
+        val=cfg.split_val,
+        test=cfg.split_test,
+        seed=cfg.seed,
+    )
+
+    #TODO: entrenar
+    #TODO: evaluar
+
+
+    #TODO: aca donde clasifico, debo usar el output del NUEVO MODELO.
+    # estoy usando el viejo, porque todavia no esta implementado el nuevo.
+    test_new_model_output_dataset = model.forward(test_dataset.X)
+    [false_pos, false_neg, true_pos, true_neg] = classify_data(test_new_model_output_dataset, test_dataset.zeta)
+    print (f"Resultados en test: FP={false_pos}  FN={false_neg}  TP={true_pos}  TN={true_neg}")
