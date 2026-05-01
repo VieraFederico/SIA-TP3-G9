@@ -38,6 +38,36 @@ def plot_error_curve(history: dict, output_path: str) -> None:
     plt.close()
 
 
+def plot_learning_comparison(
+    history_linear: dict,
+    history_nonlinear: dict,
+    output_path: str,
+) -> None:
+    """Superpone curvas de error: perceptrón lineal vs no lineal.
+
+    Usado para Ejercicio 1a/1b: detectar underfitting (lineal) o
+    saturación (tanh) inspeccionando ambas curvas a la vez.
+    """
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    epochs_linear = range(1, len(history_linear["train_error"]) + 1)
+    epochs_nonlinear = range(1, len(history_nonlinear["train_error"]) + 1)
+
+    plt.figure(figsize=(9, 4))
+    plt.plot(epochs_linear, history_linear["train_error"],
+             label="Lineal (Identity)", color="steelblue")
+    plt.plot(epochs_nonlinear, history_nonlinear["train_error"],
+             label="No lineal (Tanh)", color="crimson", linestyle="--")
+    plt.title("Comparación de aprendizaje: lineal vs no lineal")
+    plt.xlabel("Época")
+    plt.ylabel("Error de entrenamiento")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.savefig(output_path, dpi=150, bbox_inches="tight")
+    plt.close()
+
+
 def plot_confusion_matrix(zeta: Array, O: Array, save_to: str | None = None) -> None:
     """Grafica la matriz de confusión de las predicciones."""
     raise NotImplementedError("TODO")
