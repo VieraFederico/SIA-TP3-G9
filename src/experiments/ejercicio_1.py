@@ -1,6 +1,6 @@
 import numpy as np
 
-from data_management.preprocessing import normalize
+from src.data_management.preprocessing import normalize, normalize_with_params
 from src.data_management.loader import load_csv
 from src.network.multilayer_perceptron import MultilayerPerceptron
 from src.network.neuron_layer import NeuronLayer
@@ -57,8 +57,10 @@ def run(cfg: ExperimentConfig) -> None:
         cfg=cfg,
     )
 
-    norm_dataset = normalize(train_dataset.X)
-    val_dataset.X = normalize(val_dataset.X)
+    Xmin = train_dataset.X.min(axis=0)
+    Xmax = train_dataset.X.max(axis=0)
+    norm_dataset = normalize_with_params(train_dataset.X, Xmin, Xmax)
+    val_dataset.X = normalize_with_params(val_dataset.X, Xmin, Xmax)
 
     history = trainer.fit(
         model,

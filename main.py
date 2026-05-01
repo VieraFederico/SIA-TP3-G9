@@ -1,6 +1,5 @@
-from tutorial.ejercicios import ejercicio_1, ejercicio_2, ejercicio_3
+from src.experiments import ejercicio_1, ejercicio_2, ejercicio_3
 from utils.parser import parse_args
-#from src.experiments import ejercicio_2, ejercicio_3, ejercicio_1
 from src.experiments import tutorial_step, tutorial_linear, tutorial_non_linear, tutorial_mlp_tanh
 
 EJERCICIOS = {

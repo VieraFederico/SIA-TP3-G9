@@ -93,7 +93,7 @@ class Trainer:
             # Clase 11:  E = f(x^μ_1, ..., x^μ_n);  si E < ε → convergencia
             # Acumulamos E sobre todas las muestras de la época.
             total_loss += self.cost_fn.compute(zi, O)
-        return total_loss
+        return total_loss / len(X)
 
 
     def _train_epoch_minibatch(self, model: Model, X: Array, zeta: Array) -> float:
@@ -125,4 +125,4 @@ class Trainer:
 
     def _evaluate_loss(self, model: Model, X: Array, zeta: Array) -> float:
         """Mide la pérdida total sin tocar los pesos."""
-        return sum(self.cost_fn.compute(zi, model.forward(xi)) for xi, zi in zip(X, zeta))
+        return sum(self.cost_fn.compute(zi, model.forward(xi)) for xi, zi in zip(X, zeta)) / len(X)
