@@ -30,3 +30,6 @@ class Dataset:
         test_ds = Dataset(self.X[test_idx], self.zeta[test_idx])
 
         return train_ds, val_ds, test_ds
+
+    def copy(self):
+        return Dataset(self.X.copy(), self.zeta.copy())

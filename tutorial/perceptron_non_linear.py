@@ -14,7 +14,7 @@ class PerceptronNonLinear(Perceptron):
     # where B is an arbitrary constant from > 0 to 10
     # the derivative from
 
-    def __init__(self, learning_rate=0.1, epochs=20, epsilon=0.01):
+    def __init__(self, learning_rate=0.1, epochs=20, epsilon=0.02):
         super().__init__(learning_rate, epochs,epsilon)
         self.beta_value = None
 
