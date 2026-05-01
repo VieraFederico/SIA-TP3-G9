@@ -1,5 +1,3 @@
-import numpy as np
-
 from src.data_management.preprocessing import normalize, normalize_with_params
 from src.data_management.loader import load_csv
 from src.network.multilayer_perceptron import MultilayerPerceptron
@@ -11,7 +9,7 @@ from src.cost.mse import MSECost
 from src.optimizer.gradient_descent import GradientDescent
 from src.trainer import Trainer
 from src.config import ExperimentConfig
-from analysis.plots import plot_regression
+from analysis.plots import plot_regression,plot_error_curve
 from src.metric.classify_data import classify_data
 from src.metric.f1 import  F1Metric
 
@@ -69,18 +67,8 @@ def run(cfg: ExperimentConfig) -> None:
     print(f"Bias final:  w₀={layer.bias[0]:.4f}   (esperado ≈ 5.0)")
     print(f"Épocas:      {history['epochs']}")
 
-    if dataset.X.shape[1] == 1:
-        plot_regression(
-            dataset.X, dataset.zeta, model,
-            title="ADALINE Lineal — predicción vs datos",
-            output_path="output/experiment/linear/regression.png",
-            xlim=(-6, 6),
-            ylim=(-8, 18),
-        )
-    else:
-        print("Se omite plot_regression: solo aplica a datasets de 1 feature.")
     # TODO> para esta etapa, no usamos val. Como esta funcion de grafico depende de val, la comento por ahora
-    # plot_error_curve(history, output_path="output/experiment/linear/error_curve.png")
+    plot_error_curve(history, output_path="output/experiment/linear/error_curve.png")
     print("Gráficos guardados en output/experiment/linear/")
 
     print(f"Error final: {history['train_error'][-1]:.4f}")
