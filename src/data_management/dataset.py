@@ -10,7 +10,7 @@ class Dataset:
     X: Array
     zeta: Array
 
-    def split(self, train=0.7, val=0.0, test=0.3, seed=42) -> tuple["Dataset", "Dataset", "Dataset"]:
+    def split(self, train=0.7, val=0.0, test=0.3, seed=42) -> tuple["Dataset", "Dataset", "Dataset", list[np.ndarray]]:
         assert abs(train + val + test - 1.0) < 1e-6, "train+val+test must sum to 1"
 
         n = len(self.X)
@@ -29,7 +29,7 @@ class Dataset:
         val_ds = Dataset(self.X[val_idx], self.zeta[val_idx])
         test_ds = Dataset(self.X[test_idx], self.zeta[test_idx])
 
-        return train_ds, val_ds, test_ds
+        return train_ds, val_ds, test_ds, [train_idx, val_idx, test_idx]
 
     def copy(self):
         return Dataset(self.X.copy(), self.zeta.copy())

@@ -4,7 +4,10 @@ from src.activation.activation import Array
 
 def classify_data (zeta: Array, output: Array)->Array:
 
-    arr_output_size = zeta.shape[0]
+    zeta = np.asarray(zeta).reshape(-1)
+    output = np.asarray(output).reshape(-1)
+
+    arr_output_size = output.shape[0]
     arr_zeta_size = zeta.shape[0]
     if arr_output_size != arr_zeta_size:
         raise ValueError("zeta and output have different shapes")

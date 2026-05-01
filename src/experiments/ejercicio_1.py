@@ -91,7 +91,7 @@ def run(cfg: ExperimentConfig) -> None:
 
     print(f"Error final: {history['train_error'][-1]:.4f}")
 
-    train_dataset, val_dataset, test_dataset = norm_dataset.split(
+    train_dataset, val_dataset, test_dataset,[train_index, val_index, test_index] = norm_dataset.split(
         train=cfg.split_train,
         val=cfg.split_val,
         test=cfg.split_test,
@@ -104,6 +104,9 @@ def run(cfg: ExperimentConfig) -> None:
 
     #TODO: aca donde clasifico, debo usar el output del NUEVO MODELO.
     # estoy usando el viejo, porque todavia no esta implementado el nuevo.
+    # test_new_model_output_dataset = NEW_MODEL.forward(test_dataset.X)
+
     test_new_model_output_dataset = model.forward(test_dataset.X)
-    [false_pos, false_neg, true_pos, true_neg] = classify_data(test_new_model_output_dataset, test_dataset.zeta)
+    test_zeta_dataset = load_csv(cfg.data_path, target_column=excluded_columns[0]).zeta[test_index]
+    [false_pos, false_neg, true_pos, true_neg] = classify_data(test_zeta_dataset, test_new_model_output_dataset)
     print (f"Resultados en test: FP={false_pos}  FN={false_neg}  TP={true_pos}  TN={true_neg}")
