@@ -20,7 +20,7 @@ def run(cfg: ExperimentConfig) -> None:
     #SET UP
     df = pd.read_csv(cfg.data_path)
     X = np.array(df["image"].apply(ast.literal_eval).tolist())
-    zeta = df["label"].values
+    zeta = one_hot(df["label"].values)
     dataset = Dataset(X=X, zeta=zeta)
 
     model = MultilayerPerceptron([
@@ -40,22 +40,26 @@ def run(cfg: ExperimentConfig) -> None:
     )
 
     # LEARN
+    # TODO EVALUATION
+
     history = trainer_mlp.fit(
-        model, train_dataset.X, train_dataset.zeta, X_val=None, zeta_val=None
+        model, train_dataset.X, train_dataset.zeta, val_dataset.X, val_dataset.zeta
     )
 
-    # DEBUG: training history
     print(f"[DEBUG ej2] Training finished.")
+    print(f"Error final: {history['train_error'][-1]:.4f}")
 
-
-    #TODO
-    # EVALUATION
 
     # GENERALIZATION
-    test_output_dataset = model.forward(test_dataset.X)
+
+    df = pd.read_csv("data/digits_test.csv")
+    X = np.array(df["image"].apply(ast.literal_eval).tolist())
+    zeta = df["label"].values
+    dataset_2 = Dataset(X=X, zeta=zeta)
+
+    test_output_dataset_2 = model.forward(dataset_2.X)
     confusion = classify_data_mlp(
-        test_dataset.zeta, test_output_dataset
-    )
+        dataset_2.zeta, test_output_dataset_2)
 
     print("Confusion Matrix")
     print("Rows = True class")
@@ -65,3 +69,10 @@ def run(cfg: ExperimentConfig) -> None:
 
     for i, row in enumerate(confusion):
         print(f"{i:3d} | " + " ".join(f"{int(v):5d}" for v in row))
+
+
+def one_hot(labels, n_classes=10):
+    y = np.zeros((len(labels), n_classes))
+    for i, label in enumerate(labels):
+        y[i, label] = 1
+    return y
