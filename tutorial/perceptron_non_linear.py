@@ -34,10 +34,10 @@ class PerceptronNonLinear(Perceptron):
         self.bias = np.random.rand()
 
         for i in range(self.epochs):
-            print(f"Epoch: {i}")
-            print("Weights:", self.weights)
-            print("Bias:", self.bias)
-            print("")
+            # print(f"Epoch: {i}")
+            # print("Weights:", self.weights)
+            # print("Bias:", self.bias)
+            # print("")
 
             predictions = np.zeros_like(y, dtype=float)
             rng = np.random.default_rng(seed=42)
@@ -57,8 +57,8 @@ class PerceptronNonLinear(Perceptron):
 
             err = mse(self,y, predictions)
             self.errors_per_epoch.append(err)
-            print(f"Best Error {err}")
-            print("")
+            # print(f"Best Error {err}")
+            # print("")
 
             if err < self.epsilon:
                 print(f"Method converged at epoch: {i}")
@@ -73,6 +73,7 @@ class PerceptronNonLinear(Perceptron):
             #     ylim=(-1.5,1.5),
             #     centered=True
             # )
+        print(f"Finished training after {self.epochs} epochs with final error {self.errors_per_epoch[-1]:.4f}")
 
 
 def mse(self, zeta, predictions) -> float:

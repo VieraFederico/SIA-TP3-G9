@@ -4,7 +4,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-
 def plot_decision_boundary(X, y, model, title, output_path):
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -40,11 +39,9 @@ def plot_decision_boundary(X, y, model, title, output_path):
     plt.close()
 
 
-
-
 def plot_adaline_regression(
-    X, y, model, title, output_path,
-    xlim=(-6, 6), ylim=(-8, 18), centered=True
+        X, y, model, title, output_path,
+        xlim=(-6, 6), ylim=(-8, 18), centered=True
 ):
     """
     Plot ADALINE regression for 1-feature data.
@@ -82,16 +79,35 @@ def plot_adaline_regression(
     plt.legend()
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
-def plot_adaline_mse(errors_per_epoch, output_path):
+
+
+def plot_adaline_mse(error_series, output_path, title="ADALINE Training Error Comparison"):
+    """
+    error_series: dict[str, list[float]] or list[tuple[str, list[float]]]
+    Example:
+        {
+            "eta=0.01": [..],
+            "eta=0.05": [..]
+        }
+    """
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    epochs = np.arange(1, len(errors_per_epoch) + 1)
     plt.figure(figsize=(7, 4))
-    plt.plot(epochs, errors_per_epoch, marker="o")
-    plt.title("ADALINE Training Error per Epoch")
+
+    if isinstance(error_series, dict):
+        items = error_series.items()
+    else:
+        items = error_series  # list of (label, errors)
+
+    for label, errors in items:
+        epochs = np.arange(1, len(errors) + 1)
+        plt.plot(epochs, errors, marker="o", label=label)
+
+    plt.title(title)
     plt.xlabel("Epoch")
     plt.ylabel("Sum of squared errors (SSE)")
     plt.grid(True, alpha=0.3)
+    plt.legend()
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()

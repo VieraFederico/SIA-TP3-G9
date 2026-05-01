@@ -1,12 +1,13 @@
 import numpy as np
 from src.activation.activation import Array
 
-
 def normalize(X: Array) -> Array:
     """Escala cada feature a [0, 1]: x' = (x - min) / (max - min)"""
     Xmin = X.min(axis=0)
     Xmax = X.max(axis=0)
-    return (X - Xmin) / (Xmax - Xmin)
+    denom = Xmax - Xmin
+    denom[denom == 0] = 1.0  # avoid division by zero for constant columns
+    return (X - Xmin) / denom
 
 
 def normalize_with_params(X: Array, Xmin: Array, Xmax: Array) -> Array:

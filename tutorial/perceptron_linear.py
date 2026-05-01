@@ -18,9 +18,9 @@ class PerceptronLinear(Perceptron):
         self.weights = np.random.rand(n_features)
         self.bias = np.random.rand()
         for i in range(self.epochs):
-            print(f"Epoch: {i}")
-            print("Weights:", self.weights)
-            print("Bias:", self.bias)
+            # print(f"Epoch: {i}")
+            # print("Weights:", self.weights)
+            # print("Bias:", self.bias)
             predictions = np.zeros_like(y, dtype=float)
             rng = np.random.default_rng(seed=42)
             indices = rng.permutation(n_samples)
@@ -48,8 +48,8 @@ class PerceptronLinear(Perceptron):
             err = mse(self,y, predictions)
             self.errors_per_epoch.append(err)
 
-            print(f"Best Error {err}")
-            print("")
+            # print(f"Best Error {err}")
+            # print("")
 
             if err < self.epsilon:
                 print(f"Early stopping at epoch {i} with error {err}")
@@ -65,6 +65,7 @@ class PerceptronLinear(Perceptron):
             #     ylim=(-8, 18),
             #     centered=True
             # )
+        print(f"Finished training after {self.epochs} epochs with final error {self.errors_per_epoch[-1]:.4f}")
 
 
 def mse(self, zeta, predictions) -> float:
