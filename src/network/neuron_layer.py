@@ -28,18 +28,24 @@ class NeuronLayer:
         self._V = self.activation.compute(self._h) # V = θ(h)
         return self._V
 
+    def zero_grads(self) -> None:
+        """Resetea los gradientes acumulados a cero."""
+        self.grad_weights = np.zeros_like(self.grad_weights)
+        self.grad_bias = np.zeros_like(self.grad_bias)
+
     def backward(self, delta: Array) -> Array:
         """delta = ∂E/∂V (gradiente de la capa siguiente).
 
-        Calcula ∂E/∂W y ∂E/∂b para esta capa, y devuelve ∂E/∂x
+        Acumula ∂E/∂W y ∂E/∂b para esta capa, y devuelve ∂E/∂x
         para que la capa anterior pueda continuar la cadena.
+        Llamar zero_grads() antes de empezar a acumular para un nuevo batch.
         """
         if self.activation.is_differentiable():
             delta_h = delta * self.activation.derivative(self._h)  # ∂E/∂h = ∂E/∂V · θ'(h)
         else:
             delta_h = delta  # Rosenblatt: θ'(h) = 1 para activaciones no diferenciables
-        self.grad_weights = np.outer(self._x, delta_h)          # ∂E/∂W = xᵀ · δh
-        self.grad_bias = delta_h                                 # ∂E/∂b = δh
+        self.grad_weights += np.outer(self._x, delta_h)         # ∂E/∂W = xᵀ · δh
+        self.grad_bias += delta_h                                # ∂E/∂b = δh
         return self.weights @ delta_h                            # ∂E/∂x → capa anterior
 
     def get_weights(self) -> tuple[Array, Array]:

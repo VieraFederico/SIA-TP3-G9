@@ -14,4 +14,15 @@ def train_val_test_split(
 
 def k_fold_split(dataset: Dataset, k: int, seed: int) -> list[tuple[Dataset, Dataset]]:
     """Genera k particiones (train, val) para validación cruzada."""
-    raise NotImplementedError("TODO")
+    n = len(dataset.X)
+    rng = np.random.default_rng(seed)
+    indices = rng.permutation(n)
+    folds = np.array_split(indices, k)
+    splits = []
+    for i in range(k):
+        val_idx = folds[i]
+        train_idx = np.concatenate([folds[j] for j in range(k) if j != i])
+        train_ds = Dataset(dataset.X[train_idx], dataset.zeta[train_idx])
+        val_ds = Dataset(dataset.X[val_idx], dataset.zeta[val_idx])
+        splits.append((train_ds, val_ds))
+    return splits

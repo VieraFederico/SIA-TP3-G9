@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.data_management.preprocessing import normalize, normalize_with_params
+from src.data_management.preprocessing import normalize, normalize_with_params, standardize, standardize_with_params
 from src.data_management.loader import load_csv
 from src.network.multilayer_perceptron import MultilayerPerceptron
 from src.network.neuron_layer import NeuronLayer
@@ -53,14 +53,25 @@ def run(cfg: ExperimentConfig) -> None:
         cfg=cfg,
     )
 
-    Xmin = dataset.X.min(axis=0)
-    Xmax = dataset.X.max(axis=0)
-    Xmin_zeta = dataset.zeta.min(axis=0)
-    Xmax_zeta = dataset.zeta.max(axis=0)
-
     norm_dataset = dataset.copy()
-    norm_dataset.X = normalize_with_params(dataset.X, Xmin, Xmax)
-    norm_dataset.zeta = normalize_with_params(dataset.zeta, Xmin_zeta, Xmax_zeta)
+    if cfg.preprocessing == "normalize":
+        Xmin = dataset.X.min(axis=0)
+        Xmax = dataset.X.max(axis=0)
+        Xmin_zeta = dataset.zeta.min(axis=0)
+        Xmax_zeta = dataset.zeta.max(axis=0)
+        norm_dataset.X = normalize_with_params(dataset.X, Xmin, Xmax)
+        norm_dataset.zeta = normalize_with_params(dataset.zeta, Xmin_zeta, Xmax_zeta)
+    elif cfg.preprocessing == "standardize":
+        mean_X = dataset.X.mean(axis=0)
+        std_X = dataset.X.std(axis=0)
+        mean_zeta = dataset.zeta.mean(axis=0)
+        std_zeta = dataset.zeta.std(axis=0)
+        norm_dataset.X = standardize_with_params(dataset.X, mean_X, std_X)
+        norm_dataset.zeta = standardize_with_params(dataset.zeta, mean_zeta, std_zeta)
+    elif cfg.preprocessing == "one_hot":
+        raise ValueError("one_hot no aplica a features continuas en Ejercicio 1.")
+    else:
+        raise ValueError(f"Preprocessing '{cfg.preprocessing}' no soportado.")
 
     history = trainer.fit(
         model,

@@ -32,6 +32,11 @@ class MultilayerPerceptron(Model):
         """Retorna lista de (grad_weights, grad_bias) por capa."""
         return [(layer.grad_weights, layer.grad_bias) for layer in self.layers]
 
+    def zero_grads(self) -> None:
+        """Resetea los gradientes acumulados de todas las capas."""
+        for layer in self.layers:
+            layer.zero_grads()
+
     def set_weights(self, weights: list[tuple[Array, Array]]) -> None:
         """Asigna pesos a todas las capas."""
         for layer, (w, b) in zip(self.layers, weights):

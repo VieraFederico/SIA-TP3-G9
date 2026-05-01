@@ -83,6 +83,7 @@ class Trainer:
             #
             # Perceptrón simple: con una sola capa no hay "retro"-propagación;
             # ∂E/∂W = -(ζ-O)·x  se calcula directo, sin necesidad de δ.
+            model.zero_grads()
             model.backward(grad)
             # ── PASO 2c: ACTUALIZACIÓN DE PESOS ──────────────────────────────
             # Clase 10.1/10.2:  w ← w + Δw    con  Δw = η·(ζ-O)·x
@@ -97,33 +98,36 @@ class Trainer:
             total_loss += self.cost_fn.compute(zi, O)
         return total_loss / len(X)
 
-
     def _train_epoch_minibatch(self, model: Model, X: Array, zeta: Array) -> float:
-        """Minibatch: acumula gradientes sobre B muestras, update una vez por batch.
-
-        for cada batch de tamaño B:
-            for cada muestra en el batch:
-                forward  → O    = model.forward(xi)
-                loss     → E   += cost(zi, O)
-                backward → grad = cost.gradient(zi, O); model.backward(grad)  # acumula grads
-            update   → pesos actualizados con el gradiente PROMEDIO del batch
-
-        Requiere que NeuronLayer soporte acumulación de gradientes (zero_grads + +=).
-        """
-        raise NotImplementedError("TODO: minibatch — NeuronLayer.backward sobrescribe grad_W en cada llamada; implementar acumulación primero")
+        """Minibatch: acumula gradientes sobre B muestras, update una vez por batch."""
+        n = len(X)
+        total_loss = 0.0
+        indices = np.random.permutation(n)
+        for start in range(0, n, self.cfg.batch_size):
+            batch_idx = indices[start:start + self.cfg.batch_size]
+            batch_size = len(batch_idx)
+            model.zero_grads()
+            for i in batch_idx:
+                xi, zi = X[i], zeta[i]
+                O = model.forward(xi)
+                model.backward(self.cost_fn.gradient(zi, O))
+                total_loss += self.cost_fn.compute(zi, O)
+            avg_grads = [(gw / batch_size, gb / batch_size) for gw, gb in model.get_grads()]
+            model.set_weights(self.optimizer.update(model.get_weights(), avg_grads))
+        return total_loss / n
 
     def _train_epoch_batch(self, model: Model, X: Array, zeta: Array) -> float:
-        """Batch: acumula gradientes sobre TODOS los datos, update una sola vez por época.
-
-        for cada muestra en el dataset completo:
-            forward  → O    = model.forward(xi)
-            loss     → E   += cost(zi, O)
-            backward → grad = cost.gradient(zi, O); model.backward(grad)  # acumula grads
-        update   → pesos actualizados con el gradiente PROMEDIO de todos los datos
-
-        Requiere que NeuronLayer soporte acumulación de gradientes (zero_grads + +=).
-        """
-        raise NotImplementedError("TODO: batch — NeuronLayer.backward sobrescribe grad_W en cada llamada; implementar acumulación primero")
+        """Batch: acumula gradientes sobre TODOS los datos, update una sola vez por época."""
+        n = len(X)
+        total_loss = 0.0
+        model.zero_grads()
+        for xi, zi in zip(X, zeta):
+            O = model.forward(xi)
+            model.backward(self.cost_fn.gradient(zi, O))
+            total_loss += self.cost_fn.compute(zi, O)
+        avg_grads = [(gw / n, gb / n) for gw, gb in model.get_grads()]
+        model.set_weights(self.optimizer.update(model.get_weights(), avg_grads))
+        return total_loss / n
 
     def _evaluate_loss(self, model: Model, X: Array, zeta: Array) -> float:
         """Mide la pérdida total sin tocar los pesos."""
