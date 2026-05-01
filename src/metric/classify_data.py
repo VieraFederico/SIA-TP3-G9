@@ -2,7 +2,7 @@ import numpy as np
 from src.activation.activation import Array
 
 
-def classify_data (zeta: Array, output: Array)->Array:
+def classify_data (zeta: Array, output: Array,threshold:float =0.8)->Array:
 
     zeta = np.asarray(zeta).reshape(-1)
     output = np.asarray(output).reshape(-1)
@@ -14,10 +14,8 @@ def classify_data (zeta: Array, output: Array)->Array:
 
     false_pos, false_neg, true_pos, true_neg = np.zeros(4)
     for index in range(arr_output_size):
-        # TODO: add this as parameter. We assume that prob. >= 0.8 is a positive classification
-        adjusted_output = 1 if output[index] >= 0.8 else 0
-        print(f"Index: {index}  Output: {output[index]:.4f}  Adjusted Output: {adjusted_output}  Zeta: {zeta[index]}")
-        # TODO: aca no estoy usando flagged_fraud sino big_model_fraud_probability. Lo cual esta mal.
+        adjusted_output = 1 if output[index] >= threshold else 0
+        # print(f"Index: {index}  Output: {output[index]:.4f}  Adjusted Output: {adjusted_output}  Zeta: {zeta[index]}")
         if zeta[index] == 1 and adjusted_output == 1:
             true_pos += 1
         elif zeta[index] == 0 and adjusted_output == 1:

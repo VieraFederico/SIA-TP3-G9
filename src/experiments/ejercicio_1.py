@@ -105,8 +105,10 @@ def run(cfg: ExperimentConfig) -> None:
     #TODO: aca donde clasifico, debo usar el output del NUEVO MODELO.
     # estoy usando el viejo, porque todavia no esta implementado el nuevo.
     # test_new_model_output_dataset = NEW_MODEL.forward(test_dataset.X)
-
     test_new_model_output_dataset = model.forward(test_dataset.X)
     test_zeta_dataset = load_csv(cfg.data_path, target_column=excluded_columns[0]).zeta[test_index]
-    [false_pos, false_neg, true_pos, true_neg] = classify_data(test_zeta_dataset, test_new_model_output_dataset)
+
+    # TODO: add this as parameter in config. We assume that prob. >= 0.8 is a positive classification
+    [false_pos, false_neg, true_pos, true_neg] = classify_data(test_zeta_dataset, test_new_model_output_dataset,threshold=0.8)
     print (f"Resultados en test: FP={false_pos}  FN={false_neg}  TP={true_pos}  TN={true_neg}")
+
