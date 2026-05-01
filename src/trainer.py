@@ -16,7 +16,7 @@ class Trainer:
         self.metrics = metrics
         self.cfg = cfg
 
-    def fit(self, model: Model, X_train: Array, zeta_train: Array, X_val: Array, zeta_val: Array) -> dict:
+    def fit(self, model: Model, X_train: Array, zeta_train: Array, X_val: Array| None, zeta_val: Array|None) -> dict:
         """Entrena el modelo y devuelve el historial de errores por época."""
         if self.cfg.training_mode == "online":
             train_fn = self._train_epoch_online
@@ -31,7 +31,9 @@ class Trainer:
 
         for epoch in range(self.cfg.epochs): # ← "for a fixed number of epochs" (Clase 11)
             train_errors.append(train_fn(model, X_train, zeta_train))
-            val_errors.append(self._evaluate_loss(model, X_val, zeta_val))
+            # TODO: esto deberia ser opcional!!
+            if X_val is not None and zeta_val is not None:
+                val_errors.append(self._evaluate_loss(model, X_val, zeta_val))
 
             if train_errors[-1] < self.cfg.epsilon:
                 break

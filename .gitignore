@@ -215,3 +215,4 @@ __marimo__/
 /.venv
 
 /output
+data/.DS_Store

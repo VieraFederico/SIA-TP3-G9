@@ -12,6 +12,7 @@ from src.optimizer.gradient_descent import GradientDescent
 from src.trainer import Trainer
 from src.config import ExperimentConfig
 from analysis.plots import plot_regression, plot_error_curve
+from src.metric.classify_data import classify_data
 
 def run(cfg: ExperimentConfig) -> None:
     """Ejercicio 1 — Detección de fraude.
@@ -30,12 +31,12 @@ def run(cfg: ExperimentConfig) -> None:
     excluded_columns = ["flagged_fraud"]
 
     dataset = load_csv(cfg.data_path, target_column=target_columns,columns_to_ignore=excluded_columns)
-    train_dataset, val_dataset, test_dataset = dataset.split(
-        train=cfg.split_train,
-        val=cfg.split_val,
-        test=cfg.split_test,
-        seed=cfg.seed,
-    )
+    # train_dataset, val_dataset, test_dataset = dataset.split(
+    #     train=cfg.split_train,
+    #     val=cfg.split_val,
+    #     test=cfg.split_test,
+    #     seed=cfg.seed,
+    # )
     if cfg.activation == "identity":
         activation = IdentityActivation()
     elif cfg.activation == "tanh":
@@ -45,7 +46,7 @@ def run(cfg: ExperimentConfig) -> None:
     else:
         raise ValueError(f"Activation '{cfg.activation}' no soportada en Ejercicio 1.")
 
-    n_inputs = train_dataset.X.shape[1]
+    n_inputs = dataset.X.shape[1]
     model = MultilayerPerceptron([
         NeuronLayer(n_inputs=n_inputs, n_neurons=1, activation=activation),
     ])
@@ -57,15 +58,21 @@ def run(cfg: ExperimentConfig) -> None:
         cfg=cfg,
     )
 
-    Xmin = train_dataset.X.min(axis=0)
-    Xmax = train_dataset.X.max(axis=0)
-    norm_dataset = normalize_with_params(train_dataset.X, Xmin, Xmax)
-    val_dataset.X = normalize_with_params(val_dataset.X, Xmin, Xmax)
+    Xmin = dataset.X.min(axis=0)
+    Xmax = dataset.X.max(axis=0)
+    Xmin_zeta = dataset.zeta.min(axis=0)
+    Xmax_zeta = dataset.zeta.max(axis=0)
+
+    norm_dataset = dataset.copy()
+    norm_dataset.X = normalize_with_params(dataset.X, Xmin, Xmax)
+    norm_dataset.zeta = normalize_with_params(dataset.zeta, Xmin_zeta, Xmax_zeta)
+    # val_dataset.X = normalize_with_params(val_dataset.X, Xmin, Xmax)
 
     history = trainer.fit(
         model,
-        X_train=norm_dataset, zeta_train=train_dataset.zeta,
-        X_val=val_dataset.X, zeta_val=val_dataset.zeta,
+        X_train=norm_dataset.X, zeta_train=norm_dataset.zeta,
+        # X_val=val_dataset.X, zeta_val=val_dataset.zeta,
+        X_val=None, zeta_val=None,
     )
 
     layer = model.layers[0]
@@ -84,8 +91,10 @@ def run(cfg: ExperimentConfig) -> None:
         )
     else:
         print("Se omite plot_regression: solo aplica a datasets de 1 feature.")
-    plot_error_curve(history, output_path="output/experiment/linear/error_curve.png")
+    # TODO> para esta etapa, no usamos val. Como esta funcion de grafico depende de val, la comento por ahora
+    # plot_error_curve(history, output_path="output/experiment/linear/error_curve.png")
     print("Gráficos guardados en output/experiment/linear/")
 
     print(f"Error final: {history['train_error'][-1]:.4f}")
 
+    # classify_data()
