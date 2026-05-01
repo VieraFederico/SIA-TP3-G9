@@ -15,7 +15,7 @@
   "eta": 0.01,
   "training_mode": "minibatch",
   "batch_size": 32,
-  "epochs": 500,
+  "epochs": 200,
   "epsilon": 0.001,
   "metrics": ["accuracy", "f1"]
 }
