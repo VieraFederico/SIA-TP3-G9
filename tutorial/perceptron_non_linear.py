@@ -1,7 +1,6 @@
 import numpy as np
 
 from tutorial.perceptron import Perceptron
-from tutorial.plot_utils import plot_decision_boundary, plot_adaline_regression
 
 
 def _tanh_derivative(x, beta_value=0.1):
@@ -80,3 +79,4 @@ def mse(self, zeta, predictions) -> float:
     """E = (1/2N) Σ (ζ - O)²"""
     N = len(zeta) if hasattr(zeta, '__len__') else 1
     return (1 / (2 * N)) * np.sum((zeta - predictions) ** 2)
+

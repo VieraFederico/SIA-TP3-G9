@@ -1,10 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
-
 from data_management.loader import load_csv
 from data_management.preprocessing import normalize
 from tutorial.perceptron_linear import PerceptronLinear
 from tutorial.perceptron_non_linear import PerceptronNonLinear
+from data_management.csv_utils import append_perceptron_result
+from utils.plot_utils import plot_error_scatter
 
 
 def main():
@@ -15,7 +14,7 @@ def main():
     X = normalize(dataset.X)
     y = dataset.zeta
 
-    n_runs = 10
+    n_runs = 3
     results = {}  # label -> list of final errors
 
     # Linear combos
@@ -26,7 +25,8 @@ def main():
             p = PerceptronLinear(lr, 75, 1e-3)
             p.fit(X, y)
             results[label].append(p.errors_per_epoch[-1])
-
+            append_perceptron_result("output/perceptron_runs.csv", "linear",
+                                     [X.shape[1], 1], lr, None, p.weights, p.bias, p.errors_per_epoch[-1], None)
     print("FINISHED LINEAR COMBO")
 
     # Non-linear combos
@@ -38,27 +38,10 @@ def main():
                 p = PerceptronNonLinear(lr, 75, 1e-3)
                 p.fit(X, y, beta)
                 results[label].append(p.errors_per_epoch[-1])
+                append_perceptron_result("output/perceptron_runs.csv", "non-linear", [X.shape[1], 1],lr,beta, p.weights, p.bias,
+                                         p.errors_per_epoch[-1], None)
 
     plot_error_scatter(results, "output/adaline_boxplot.png")
-
-
-def plot_error_scatter(results, output_path):
-    labels = list(results.keys())
-
-    plt.figure(figsize=(10, 5))
-    for i, label in enumerate(labels):
-        y = results[label]
-        x = np.full(len(y), i, dtype=float)
-        jitter = (np.random.rand(len(y)) - 0.5) * 0.2  # small horizontal jitter
-        plt.scatter(x + jitter, y, alpha=0.7)
-
-    plt.xticks(range(len(labels)), labels, rotation=45, ha="right")
-    plt.title("Final Error Scatter by Hyperparameter Combo")
-    plt.ylabel("Final MSE (last epoch)")
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=150, bbox_inches="tight")
-    plt.close()
 
 
 if __name__ == '__main__':

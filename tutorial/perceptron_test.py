@@ -3,7 +3,7 @@ import numpy as np
 
 
 
-from plot_utils import plot_decision_boundary, plot_adaline_regression
+from utils.plot_utils import plot_decision_boundary, plot_adaline_regression
 from tutorial.perceptron_linear import PerceptronLinear
 from tutorial.perceptron_non_linear import PerceptronNonLinear
 from tutorial.perceptron_step import PerceptronStep

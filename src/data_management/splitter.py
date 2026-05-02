@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 from src.data_management.dataset import Dataset
 
@@ -26,3 +28,18 @@ def k_fold_split(dataset: Dataset, k: int, seed: int) -> list[tuple[Dataset, Dat
         val_ds = Dataset(dataset.X[val_idx], dataset.zeta[val_idx])
         splits.append((train_ds, val_ds))
     return splits
+
+
+
+def k_fold_split_v2(dataset: Dataset, k: int, seed: int) -> list[Dataset]:
+    """Takes a Dataset, and randomly splits it into k folds."""
+    n = len(dataset.X)
+    rng = np.random.default_rng(seed)
+    indices = rng.permutation(n)
+    folds = np.array_split(indices, k)
+    fold_datasets = []
+    for fold_idx in folds:
+        fold_ds = Dataset(dataset.X[fold_idx], dataset.zeta[fold_idx])
+        fold_datasets.append(fold_ds)
+
+    return fold_datasets

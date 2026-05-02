@@ -111,3 +111,21 @@ def plot_adaline_mse(error_series, output_path, title="ADALINE Training Error Co
     plt.legend()
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close()
+
+def plot_error_scatter(results, output_path):
+    labels = list(results.keys())
+
+    plt.figure(figsize=(10, 5))
+    for i, label in enumerate(labels):
+        y = results[label]
+        x = np.full(len(y), i, dtype=float)
+        jitter = (np.random.rand(len(y)) - 0.5) * 0.2  # small horizontal jitter
+        plt.scatter(x + jitter, y, alpha=0.7)
+
+    plt.xticks(range(len(labels)), labels, rotation=45, ha="right")
+    plt.title("Final Error Scatter by Hyperparameter Combo")
+    plt.ylabel("Final MSE (last epoch)")
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150, bbox_inches="tight")
+    plt.close()

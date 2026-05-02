@@ -1,7 +1,6 @@
 import numpy as np
 
 from tutorial.perceptron import Perceptron
-from tutorial.plot_utils import plot_decision_boundary, plot_adaline_regression
 
 
 class PerceptronLinear(Perceptron):

@@ -9,6 +9,7 @@ class Perceptron(ABC):
         self.bias = None
         self.errors_per_epoch = []
         self.epsilon = epsilon
+        self.eval_metric_score = None
 
     @abstractmethod
     def fit(self, X, y):

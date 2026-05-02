@@ -1,5 +1,5 @@
 import numpy as np
-from plot_utils import plot_decision_boundary
+from utils.plot_utils import plot_decision_boundary
 from tutorial.perceptron import Perceptron
 
 
